@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Shared.Models;
 
-public class Proovedores
+public class Proveedores
 {
     [Key]
     public int ProovedorId { get; set; }

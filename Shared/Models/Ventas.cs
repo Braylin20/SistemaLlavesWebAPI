@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,8 +12,14 @@ public class Ventas
 {
     [Key]
     public int VentaId {  get; set; }
-    public int ClienteId { get; set; }
     public int MetodoPagoId { get; set; }
+    public int ClienteId { get; set; }
+
+    [ForeignKey(nameof(ClienteId))]
+    public Clientes? Cliente { get; set; }
+
+    [ForeignKey("MetodoPagoId")]
+    public MetodosPagos? MetodoPago { get; set; }
 
     public int Cantidad { get; set; }
     public DateOnly Fecha { get; set; }
