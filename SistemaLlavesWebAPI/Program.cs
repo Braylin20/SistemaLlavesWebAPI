@@ -1,9 +1,11 @@
 
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using SistemaLlavesWebAPI.Dal;
 
 namespace SistemaLlavesWebAPI
 {
+    [ExcludeFromCodeCoverage]
     public class Program
     {
         public static void Main(string[] args)
