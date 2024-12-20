@@ -1,6 +1,11 @@
 
+using System.Diagnostics.CodeAnalysis;
+using Microsoft.EntityFrameworkCore;
+using SistemaLlavesWebAPI.Dal;
+
 namespace SistemaLlavesWebAPI
 {
+    [ExcludeFromCodeCoverage]
     public class Program
     {
         public static void Main(string[] args)
@@ -14,6 +19,12 @@ namespace SistemaLlavesWebAPI
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            var ConStr = 
+                builder.Configuration.GetConnectionString("ConStr");
+            
+            builder.Services.AddDbContext<Context>(options =>
+                options.UseSqlServer(ConStr));
+            
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
