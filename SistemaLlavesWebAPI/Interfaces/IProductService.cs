@@ -5,8 +5,8 @@ namespace SistemaLlavesWebAPI.Interfaces;
 public interface IProductService
 {
     public Task<List<Productos>> GetAsync();
-    public Task <bool> AddAsync();
-    public Task<Productos> PutAsync();
-    public Task<Productos> DeleteAsync();
+    public Task <bool> AddAsync(Productos producto);
+    public Task<Productos> PutAsync(int id, Productos producto);
+    public Task<Productos> DeleteAsync(int id);
    
 }
