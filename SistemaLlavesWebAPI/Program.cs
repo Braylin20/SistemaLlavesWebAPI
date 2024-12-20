@@ -1,4 +1,7 @@
 
+using Microsoft.EntityFrameworkCore;
+using SistemaLlavesWebAPI.Dal;
+
 namespace SistemaLlavesWebAPI
 {
     public class Program
@@ -14,6 +17,12 @@ namespace SistemaLlavesWebAPI
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            var ConStr = 
+                builder.Configuration.GetConnectionString("ConStr");
+            
+            builder.Services.AddDbContext<Context>(options =>
+                options.UseSqlServer(ConStr));
+            
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
