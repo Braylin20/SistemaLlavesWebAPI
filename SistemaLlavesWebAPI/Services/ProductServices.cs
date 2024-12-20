@@ -23,9 +23,12 @@ namespace SistemaLlavesWebAPI.Services
             _context.Productos.Add(producto);
             return await _context.SaveChangesAsync() > 0;
         }
-        public Task<Productos> PutAsync(int id, Productos producto)
+        public async Task<Productos> PutAsync( Productos producto)
         {
-            _context.Productos.Update(producto);
+            var result = _context.Productos.Update(producto);
+            await _context.SaveChangesAsync();
+            return result.Entity;
+
         }
         public async Task<Productos?> DeleteAsync(int id)
         {
