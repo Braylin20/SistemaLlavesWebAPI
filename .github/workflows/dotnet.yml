@@ -20,10 +20,11 @@ jobs:
         dotnet-version: 8.0.x
 
     - name: Restore dependencies
-      run: dotnet restore ./SistemaLlavesWebAPI.sln  # Restaura las dependencias para todos los proyectos en la solución
+      run: dotnet restore ./SistemaLlavesWebAPI/SistemaLlavesWebAPI.sln
+  # Restaura las dependencias para todos los proyectos en la solución
 
     - name: Build
-      run: dotnet build ./SistemaLlavesWebAPI.sln --no-restore  # Construye todos los proyectos de la solución
+      run: dotnet build ./SistemaLlavesWebAPI/SistemaLlavesWebAPI.sln --no-restore  # Construye todos los proyectos de la solución
 
     - name: Test
-      run: dotnet test ./SistemaLlavesWebAPI.sln --no-build --verbosity normal 
+      run: dotnet test ./SistemaLlavesWebAPI/SistemaLlavesWebAPI.sln --no-build --verbosity normal 
