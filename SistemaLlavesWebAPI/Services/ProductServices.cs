@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 using Shared.Models;
 using SistemaLlavesWebAPI.Dal;
 using SistemaLlavesWebAPI.Interfaces;
@@ -22,13 +23,21 @@ namespace SistemaLlavesWebAPI.Services
             _context.Productos.Add(producto);
             return await _context.SaveChangesAsync() > 0;
         }
-        public Task<Productos> PutAsync()
+        public Task<Productos> PutAsync(int id, Productos producto)
         {
-            throw new NotImplementedException();
+            _context.Productos.Update(producto);
         }
-        public Task<Productos> DeleteAsync()
+        public async Task<Productos?> DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            var producto = _context.Productos.Find(id);
+
+            if (producto is not null)
+            {
+                _context.Remove(producto);
+                await _context.SaveChangesAsync();
+            }
+
+            return producto;
         }
 
 
