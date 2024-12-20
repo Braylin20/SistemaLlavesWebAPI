@@ -14,7 +14,7 @@ public class Context : DbContext
     public DbSet<Garantias> Garantias { get; set; }
     public DbSet<MetodosPagos> MetodosPagos { get; set; }
     public DbSet<Productos> Productos { get; set; }
-    public DbSet<Proovedores> Proveedores { get; set; }
+    public DbSet<Proveedores> Proveedores { get; set; }
     public DbSet<Ventas> Ventas { get; set; }
     public DbSet<VentasDetalle> VentasDetalle { get; set; }
 }
