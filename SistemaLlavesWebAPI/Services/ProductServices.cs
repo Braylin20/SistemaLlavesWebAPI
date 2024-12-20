@@ -32,7 +32,7 @@ namespace SistemaLlavesWebAPI.Services
         }
         public async Task<Productos?> DeleteAsync(int id)
         {
-            var producto = _context.Productos.Find(id);
+            var producto = await _context.Productos.FindAsync(id);
 
             if (producto is not null)
             {
