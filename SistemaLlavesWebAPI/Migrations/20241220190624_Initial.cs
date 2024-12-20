@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Shared.Models;
 
 #nullable disable
 
@@ -11,6 +12,11 @@ namespace SistemaLlavesWebAPI.Migrations
     [ExcludeFromCodeCoverage]
     public partial class Initial : Migration
     {
+        const string PRODUCTOS = "Productos";
+        const string COMPRA_DETALLE = "ComprasDetalle";
+        const string SQLSERVER_IDENTITY = "SqlServer:Identity";
+        const string VENTAS = "Ventas";
+        const string FLOAT = "float";
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -19,7 +25,7 @@ namespace SistemaLlavesWebAPI.Migrations
                 columns: table => new
                 {
                     CategoriaId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation(SQLSERVER_IDENTITY, "1, 1"),
                     Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -32,7 +38,7 @@ namespace SistemaLlavesWebAPI.Migrations
                 columns: table => new
                 {
                     ClienteId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation(SQLSERVER_IDENTITY, "1, 1"),
                     Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Direccion = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Telefono = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -48,9 +54,9 @@ namespace SistemaLlavesWebAPI.Migrations
                 columns: table => new
                 {
                     CompraId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation(SQLSERVER_IDENTITY, "1, 1"),
                     Fecha = table.Column<DateOnly>(type: "date", nullable: false),
-                    Total = table.Column<double>(type: "float", nullable: false)
+                    Total = table.Column<double>(type: FLOAT, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -62,7 +68,7 @@ namespace SistemaLlavesWebAPI.Migrations
                 columns: table => new
                 {
                     GarantiaId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation(SQLSERVER_IDENTITY, "1, 1"),
                     Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     InicioGarantia = table.Column<DateOnly>(type: "date", nullable: false),
                     FinGarantia = table.Column<DateOnly>(type: "date", nullable: false),
@@ -78,7 +84,7 @@ namespace SistemaLlavesWebAPI.Migrations
                 columns: table => new
                 {
                     MetodoPagoId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation(SQLSERVER_IDENTITY, "1, 1"),
                     TipoMetodoPago = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
@@ -91,7 +97,7 @@ namespace SistemaLlavesWebAPI.Migrations
                 columns: table => new
                 {
                     ProovedorId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation(SQLSERVER_IDENTITY, "1, 1"),
                     Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Direccion = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -103,11 +109,11 @@ namespace SistemaLlavesWebAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Ventas",
+                name: VENTAS,
                 columns: table => new
                 {
                     VentaId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation(SQLSERVER_IDENTITY, "1, 1"),
                     MetodoPagoId = table.Column<int>(type: "int", nullable: false),
                     ClienteId = table.Column<int>(type: "int", nullable: false),
                     Cantidad = table.Column<int>(type: "int", nullable: false),
@@ -133,18 +139,18 @@ namespace SistemaLlavesWebAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Productos",
+                name: PRODUCTOS,
                 columns: table => new
                 {
                     ProductoId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation(SQLSERVER_IDENTITY, "1, 1"),
                     Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Precio = table.Column<double>(type: "float", nullable: false),
-                    Costo = table.Column<double>(type: "float", nullable: false),
+                    Precio = table.Column<double>(type: FLOAT, nullable: false),
+                    Costo = table.Column<double>(type: FLOAT, nullable: false),
                     Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Cantidad = table.Column<int>(type: "int", nullable: false),
-                    Itbis = table.Column<double>(type: "float", nullable: true),
-                    Descuento = table.Column<double>(type: "float", nullable: true),
+                    Itbis = table.Column<double>(type: FLOAT, nullable: true),
+                    Descuento = table.Column<double>(type: FLOAT, nullable: true),
                     CategoriaId = table.Column<int>(type: "int", nullable: false),
                     ProveedorId = table.Column<int>(type: "int", nullable: false),
                     GarantiaId = table.Column<int>(type: "int", nullable: true)
@@ -172,15 +178,15 @@ namespace SistemaLlavesWebAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ComprasDetalle",
+                name: COMPRA_DETALLE,
                 columns: table => new
                 {
                     CompraDetalleId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation(SQLSERVER_IDENTITY, "1, 1"),
                     ProductoId = table.Column<int>(type: "int", nullable: false),
                     CompraId = table.Column<int>(type: "int", nullable: false),
                     Cantidad = table.Column<int>(type: "int", nullable: false),
-                    Total = table.Column<double>(type: "float", nullable: false)
+                    Total = table.Column<double>(type: FLOAT, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -194,7 +200,7 @@ namespace SistemaLlavesWebAPI.Migrations
                     table.ForeignKey(
                         name: "FK_ComprasDetalle_Productos_ProductoId",
                         column: x => x.ProductoId,
-                        principalTable: "Productos",
+                        principalTable: PRODUCTOS,
                         principalColumn: "ProductoId",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -204,12 +210,12 @@ namespace SistemaLlavesWebAPI.Migrations
                 columns: table => new
                 {
                     VentasDetalleId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation(SQLSERVER_IDENTITY, "1, 1"),
                     VentaId = table.Column<int>(type: "int", nullable: false),
                     ProductoId = table.Column<int>(type: "int", nullable: false),
                     Cantidad = table.Column<int>(type: "int", nullable: false),
-                    ItbisTotal = table.Column<double>(type: "float", nullable: false),
-                    Total = table.Column<double>(type: "float", nullable: false)
+                    ItbisTotal = table.Column<double>(type: FLOAT, nullable: false),
+                    Total = table.Column<double>(type: FLOAT, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -217,50 +223,50 @@ namespace SistemaLlavesWebAPI.Migrations
                     table.ForeignKey(
                         name: "FK_VentasDetalle_Productos_ProductoId",
                         column: x => x.ProductoId,
-                        principalTable: "Productos",
+                        principalTable: PRODUCTOS,
                         principalColumn: "ProductoId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_VentasDetalle_Ventas_VentaId",
                         column: x => x.VentaId,
-                        principalTable: "Ventas",
+                        principalTable: VENTAS,
                         principalColumn: "VentaId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_ComprasDetalle_CompraId",
-                table: "ComprasDetalle",
+                table: COMPRA_DETALLE,
                 column: "CompraId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ComprasDetalle_ProductoId",
-                table: "ComprasDetalle",
+                table: COMPRA_DETALLE,
                 column: "ProductoId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Productos_CategoriaId",
-                table: "Productos",
+                table: PRODUCTOS,
                 column: "CategoriaId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Productos_GarantiaId",
-                table: "Productos",
+                table: PRODUCTOS,
                 column: "GarantiaId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Productos_ProveedorId",
-                table: "Productos",
+                table: PRODUCTOS,
                 column: "ProveedorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Ventas_ClienteId",
-                table: "Ventas",
+                table: VENTAS,
                 column: "ClienteId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Ventas_MetodoPagoId",
-                table: "Ventas",
+                table: VENTAS,
                 column: "MetodoPagoId");
 
             migrationBuilder.CreateIndex(
@@ -278,7 +284,7 @@ namespace SistemaLlavesWebAPI.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "ComprasDetalle");
+                name: COMPRA_DETALLE);
 
             migrationBuilder.DropTable(
                 name: "VentasDetalle");
@@ -287,10 +293,10 @@ namespace SistemaLlavesWebAPI.Migrations
                 name: "Compras");
 
             migrationBuilder.DropTable(
-                name: "Productos");
+                name: PRODUCTOS);
 
             migrationBuilder.DropTable(
-                name: "Ventas");
+                name: VENTAS);
 
             migrationBuilder.DropTable(
                 name: "Categorias");
