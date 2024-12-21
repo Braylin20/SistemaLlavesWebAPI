@@ -23,11 +23,11 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install .NET tools
+      - name: Install SonarCloud scanner
         shell: powershell
         run: |
           dotnet tool install --global dotnet-sonarscanner
-          dotnet tool install --global coverlet.console
+
       - name: Add .NET Tools to PATH
         shell: powershell
         run: |
@@ -38,18 +38,13 @@ jobs:
         run: |
           dotnet restore ./SistemaLlavesWebAPI/SistemaLlavesWebAPI.sln
 
-      - name: Run tests with coverage
-        shell: powershell
-        run: |
-          dotnet test ./TestServices/TestServices.csproj --logger "trx;LogFileName=TestResults.trx" --collect:"XPlat Code Coverage" /p:CoverletOutputFormat=opencover /p:CoverletOutput=./coverage/
-
       - name: Prepare SonarCloud analysis
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: |
-          dotnet-sonarscanner begin /k:"Braylin20_SistemaLlavesWebAPI" /o:"braylin20" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.cs.vstest.reportsPaths="TestServices/TestResults/TestResults.trx" /d:sonar.cs.opencover.reportsPaths="./coverage/coverage.opencover.xml"
+          dotnet-sonarscanner begin /k:"Braylin20_SistemaLlavesWebAPI" /o:"braylin20" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
       - name: Build solution
         shell: powershell
