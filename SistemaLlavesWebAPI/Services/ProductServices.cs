@@ -9,14 +9,9 @@ using System.Diagnostics.CodeAnalysis;
 namespace SistemaLlavesWebAPI.Services;
 
 [ExcludeFromCodeCoverage]
-public class ProductServices : IProductService
+public class ProductServices(Context _context) : IProductService
 {
-    private readonly Context _context;
-
-    public ProductServices(Context context)
-    {
-        this._context = context;
-    }
+    
     public async Task<List<Productos>> GetAsync()
     {
         return await _context.Productos.ToListAsync();
@@ -26,22 +21,20 @@ public class ProductServices : IProductService
         _context.Productos.Add(producto);
         return await _context.SaveChangesAsync() > 0;
     }
-    public async Task<Productos> PutAsync( Productos producto)
+    public async Task<Productos> PutAsync(Productos producto)
     {
         var result = _context.Productos.Update(producto);
         await _context.SaveChangesAsync();
         return result.Entity;
 
     }
-    public async Task<Productos?> DeleteAsync(int id)
+    public async Task<Productos> DeleteAsync(int id)
     {
-        var producto = await _context.Productos.FindAsync(id);
+        var producto = await _context.Productos.FindAsync(id) ??
+            throw new KeyNotFoundException("The product was not found");
 
-        if (producto is not null)
-        {
-            _context.Remove(producto);
-            await _context.SaveChangesAsync();
-        }
+        _context.Remove(producto);
+        await _context.SaveChangesAsync();
 
         return producto;
     }
