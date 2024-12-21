@@ -36,6 +36,16 @@ jobs:
         run: |
           (Get-Content TestServices/TestResults/coverage.opencover.xml) -replace 'D:\\a\\SistemaLlavesWebAPI\\', './' | Set-Content TestServices/TestResults/coverage.opencover.xml
 
+      - name: Install SonarQube Cloud scanner
+        shell: powershell
+        run: |
+          dotnet tool install --global dotnet-sonarscanner
+
+      - name: Add .NET Tools to PATH
+        shell: powershell
+        run: |
+          $env:PATH += ";$($env:USERPROFILE)\.dotnet\tools"
+          
       - name: Build and analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
