@@ -1,4 +1,5 @@
 name: SonarQube
+
 on:
   push:
     branches:
@@ -17,43 +18,47 @@ jobs:
           java-version: 17
           distribution: 'zulu'
 
-      - uses: actions/checkout@v4
+      - name: Check out code
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Cache SonarQube Cloud packages
-        uses: actions/cache@v4
-        with:
-          path: ~\sonar\cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
-
-      - name: Cache SonarQube Cloud scanner
-        id: cache-sonar-scanner
-        uses: actions/cache@v4
-        with:
-          path: .\.sonar\scanner
-          key: ${{ runner.os }}-sonar-scanner
-          restore-keys: ${{ runner.os }}-sonar-scanner
-
-      - name: Install SonarQube Cloud scanner
-        if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
+      - name: Install .NET tools
         shell: powershell
         run: |
-          New-Item -Path .\.sonar\scanner -ItemType Directory
-          dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
-
-      - name: Run Tests with Coverage
+          dotnet tool install --global dotnet-sonarscanner
+          dotnet tool install --global coverlet.console
+      - name: Add .NET Tools to PATH
         shell: powershell
         run: |
-          dotnet test ./SistemaLlavesWebAPI/SistemaLlavesWebAPI.sln /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/coverage.opencover.xml
+          $env:PATH += ";$($env:USERPROFILE)\.dotnet\tools"
 
-      - name: Build and analyze
+      - name: Restore dependencies
+        shell: powershell
+        run: |
+          dotnet restore ./SistemaLlavesWebAPI/SistemaLlavesWebAPI.sln
+
+      - name: Run tests with coverage
+        shell: powershell
+        run: |
+          dotnet test ./TestServices/TestServices.csproj --logger "trx;LogFileName=TestResults.trx" --collect:"XPlat Code Coverage" /p:CoverletOutputFormat=opencover /p:CoverletOutput=./coverage/
+
+      - name: Prepare SonarCloud analysis
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"Braylin20_SistemaLlavesWebAPI" /o:"braylin20" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="TestResults/coverage.opencover.xml"
-          dotnet build ./SistemaLlavesWebAPI/SistemaLlavesWebAPI.sln
-          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+          dotnet-sonarscanner begin /k:"Braylin20_SistemaLlavesWebAPI" /o:"braylin20" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.cs.vstest.reportsPaths="TestServices/TestResults/TestResults.trx" /d:sonar.cs.opencover.reportsPaths="./coverage/coverage.opencover.xml"
+
+      - name: Build solution
+        shell: powershell
+        run: |
+          dotnet build ./SistemaLlavesWebAPI/SistemaLlavesWebAPI.sln --configuration Release
+
+      - name: Run SonarCloud analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        shell: powershell
+        run: |
+          dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
