@@ -24,17 +24,12 @@ jobs:
       - name: Run Tests with Coverage
         shell: powershell
         run: |
-          dotnet test ./SistemaLlavesWebAPI/SistemaLlavesWebAPI.sln /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestServices/TestResults/coverage.opencover.xml /p:CoverletOutputDirectory=TestServices/TestResults
-
-      - name: List Files in TestResults
-        shell: bash
-        run: |
-          ls -R TestServices/TestResults
+          dotnet test ./TestServices/TestServices.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/coverage.opencover.xml /p:CoverletOutputDirectory=TestServices/TestResults
 
       - name: Adjust Coverage Paths (Windows)
         shell: powershell
         run: |
-          (Get-Content TestServices/TestResults/coverage.opencover.xml) -replace 'C:\\Users\\eliez\\source\\repos\\SISTEMA-API\\', './' | Set-Content TestServices/TestResults/coverage.opencover.xml
+          (Get-Content TestServices/TestResults/coverage.opencover.xml) -replace 'D:\\a\\SistemaLlavesWebAPI\\', './' | Set-Content TestServices/TestResults/coverage.opencover.xml
 
       - name: Build and analyze
         env:
