@@ -2,9 +2,11 @@
 using Shared.Models;
 using SistemaLlavesWebAPI.Dal;
 using SistemaLlavesWebAPI.Interfaces;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SistemaLlavesWebAPI.Services
 {
+    [ExcludeFromCodeCoverage]
     public class MetodoPagosService(Context _context) : IMetodoPagosService
     {
         public async Task<List<MetodosPagos>> GetAsync()
