@@ -9,14 +9,9 @@ using System.Diagnostics.CodeAnalysis;
 namespace SistemaLlavesWebAPI.Services;
 
 [ExcludeFromCodeCoverage]
-public class ProductServices : IProductService
+public class ProductServices(Context _context) : IProductService
 {
-    private readonly Context _context;
-
-    public ProductServices(Context context)
-    {
-        this._context = context;
-    }
+    
     public async Task<List<Productos>> GetAsync()
     {
         return await _context.Productos.ToListAsync();
