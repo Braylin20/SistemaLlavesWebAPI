@@ -20,6 +20,12 @@ namespace SistemaLlavesWebAPI.Services
         }
         public async Task<Garantias> PutAsync(Garantias garantia)
         {
+          
+            var existingWarranty = await _context.Garantias.FindAsync(garantia.GarantiaId) ??
+                throw new KeyNotFoundException($"Warranty with ID {garantia.GarantiaId} was not found");
+
+            _context.Entry(existingWarranty).State = EntityState.Detached;
+
             var result = _context.Garantias.Update(garantia);
             await _context.SaveChangesAsync();
             return result.Entity;
