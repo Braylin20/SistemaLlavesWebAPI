@@ -1,4 +1,5 @@
 name: SonarQube
+
 on:
   push:
     branches:
@@ -21,27 +22,24 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Run Tests and Generate Test Results
+      - name: Run Tests with Coverage (modify as needed)
         shell: powershell
         run: |
-          dotnet test ./TestServices/TestServices.csproj --logger "trx;LogFileName=TestResults.trx"
-
+          dotnet test ./TestServices/TestServices.csproj --logger "trx;LogFileName=TestResults.trx" /p:CollectCoverage=true /coveragedir="coverage"
       - name: Install SonarQube Cloud scanner
         shell: powershell
         run: |
           dotnet tool install --global dotnet-sonarscanner
-
       - name: Add .NET Tools to PATH
         shell: powershell
         run: |
           $env:PATH += ";$($env:USERPROFILE)\.dotnet\tools"
-
       - name: Build and analyze with SonarCloud
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: |
-          dotnet-sonarscanner begin /k:"Braylin20_SistemaLlavesWebAPI" /o:"braylin20" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.cs.vstest.reportsPaths="TestServices/TestResults/TestResults.trx"
+         dotnet-sonarscanner begin /k:"Braylin20_SistemaLlavesWebAPI" /o:"braylin20" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.cs.vstest.reportsPaths="TestServices/TestResults/TestResults.trx" /d:sonar.coverage.reportsPaths="coverage"
           dotnet build ./SistemaLlavesWebAPI/SistemaLlavesWebAPI.sln
           dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
