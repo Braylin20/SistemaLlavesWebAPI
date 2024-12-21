@@ -24,9 +24,9 @@ jobs:
       - name: Run Tests with Coverage
         shell: powershell
         run: |
-          dotnet test ./SistemaLlavesWebAPI/SistemaLlavesWebAPI.sln /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestServices/TestResults/coverage.opencover.xml /p:CoverletOutputDirectory=./
+          dotnet test ./SistemaLlavesWebAPI/SistemaLlavesWebAPI.sln /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestServices/TestResults/coverage.opencover.xml /p:CoverletOutputDirectory=TestServices/TestResults
 
-      - name: List Files
+      - name: List Files in TestResults
         shell: bash
         run: |
           ls -R TestServices/TestResults
