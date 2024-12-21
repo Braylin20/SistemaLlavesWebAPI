@@ -24,17 +24,17 @@ jobs:
       - name: Run Tests with Coverage
         shell: powershell
         run: |
-          dotnet test ./TestServices/TestServices.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/coverage.opencover.xml /p:CoverletOutputDirectory=./TestResults
+          dotnet test ./TestServices/TestServices.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/coverage.opencover.xml /p:CoverletOutputDirectory=TestServices
 
-      - name: List All Files
+      - name: List Files in TestServices
         shell: bash
         run: |
-          ls -R
+          ls -R TestServices
 
-      - name: Adjust Coverage Paths (Windows)
+      - name: Adjust Coverage Paths
         shell: powershell
         run: |
-          (Get-Content TestResults/coverage.opencover.xml) -replace 'D:\\a\\SistemaLlavesWebAPI\\', './' | Set-Content TestResults/coverage.opencover.xml
+          (Get-Content TestServices/TestResults/coverage.opencover.xml) -replace 'D:\\a\\SistemaLlavesWebAPI\\', './' | Set-Content TestServices/TestResults/coverage.opencover.xml
 
       - name: Build and analyze
         env:
@@ -42,6 +42,6 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: |
-          dotnet-sonarscanner begin /k:"Braylin20_SistemaLlavesWebAPI" /o:"braylin20" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="TestResults/coverage.opencover.xml" /d:sonar.verbose=true
+          dotnet-sonarscanner begin /k:"Braylin20_SistemaLlavesWebAPI" /o:"braylin20" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="TestServices/TestResults/coverage.opencover.xml" /d:sonar.verbose=true
           dotnet build ./SistemaLlavesWebAPI/SistemaLlavesWebAPI.sln
           dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
