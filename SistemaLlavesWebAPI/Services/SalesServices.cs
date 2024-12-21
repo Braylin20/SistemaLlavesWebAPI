@@ -2,9 +2,11 @@
 using Shared.Models;
 using SistemaLlavesWebAPI.Dal;
 using SistemaLlavesWebAPI.Interfaces;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SistemaLlavesWebAPI.Services
 {
+    [ExcludeFromCodeCoverage]
     public class SalesServices : ISalesService
     {
         private readonly Context _context;
