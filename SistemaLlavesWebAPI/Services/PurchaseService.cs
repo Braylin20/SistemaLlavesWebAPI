@@ -33,6 +33,11 @@ namespace SistemaLlavesWebAPI.Services
 
         public async Task<Compras> PutAsync(Compras compra)
         {
+            var existingCompra = await _context.Compras.FindAsync(compra.CompraId) ??
+                throw new KeyNotFoundException($"Compra with ID {compra.CompraId} was not found");
+
+            _context.Entry(existingCompra).State = EntityState.Detached;
+
             var result = _context.Compras.Update(compra);
             await _context.SaveChangesAsync();
             return result.Entity;
