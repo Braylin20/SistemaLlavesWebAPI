@@ -3,57 +3,75 @@ name: SonarQube
 on:
   push:
     branches:
-      - master
+      - main
+      - QA
   pull_request:
     types: [opened, synchronize, reopened]
 
 jobs:
   build:
-    name: Build and analyze
     runs-on: windows-latest
     steps:
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: 17
-          distribution: 'zulu'
-
       - name: Check out code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Install SonarCloud scanner
-        shell: powershell
-        run: |
-          dotnet tool install --global dotnet-sonarscanner
-
-      - name: Add .NET Tools to PATH
-        shell: powershell
-        run: |
-          $env:PATH += ";$($env:USERPROFILE)\.dotnet\tools"
+      - name: Setup .NET and JDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '6.0' # Cambiar según tu proyecto
+      - name: Setup JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: 'zulu'
 
       - name: Restore dependencies
-        shell: powershell
-        run: |
-          dotnet restore ./SistemaLlavesWebAPI/SistemaLlavesWebAPI.sln
+        run: dotnet restore
 
-      - name: Prepare SonarCloud analysis
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        shell: powershell
-        run: |
-          dotnet-sonarscanner begin /k:"Braylin20_SistemaLlavesWebAPI" /o:"braylin20" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+      - name: Prepare SonarCloud Analysis
+        uses: SonarSource/sonarcloud-github-action@v2
+        with:
+          args: >
+            -Dsonar.projectKey=[redacted]
+            -Dsonar.organization=[redacted]
+            -Dsonar.host.url=https://sonarcloud.io
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+            -Dsonar.cs.xunit.reportsPaths="**/*.trx"
+            -Dsonar.cs.opencover.reportsPaths="coverage/coverage.opencover.xml"
 
       - name: Build solution
-        shell: powershell
-        run: |
-          dotnet build ./SistemaLlavesWebAPI/SistemaLlavesWebAPI.sln --configuration Release
+        run: dotnet build --no-restore --configuration Release
 
-      - name: Run SonarCloud analysis
+      - name: Run tests with coverage
+        run: |
+          dotnet test --no-build --logger trx --collect:"XPlat Code Coverage" /p:CoverletOutput=./coverage/ /p:CoverletOutputFormat=opencover
+
+      - name: Generate Coverage Report
+        run: |
+          dotnet tool install dotnet-reportgenerator-globaltool --tool-path ./tools
+          ./tools/reportgenerator "-reports:coverage/coverage.opencover.xml" "-targetdir:coverage/report" "-reporttypes:Cobertura;HTMLInline;HTMLChart"
+
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: CoverageReport
+          path: coverage/report
+
+      - name: Run SonarCloud Analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        shell: powershell
-        run: |
-          dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+        run: dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+
+      - name: Publish Test Results
+        uses: actions/upload-artifact@v3
+        with:
+          name: TestResults
+          path: '**/*.trx'
+
+      - name: Publish Coverage Results
+        uses: actions/upload-artifact@v3
+        with:
+          name: CoverageFile
+          path: coverage/coverage.opencover.xml
