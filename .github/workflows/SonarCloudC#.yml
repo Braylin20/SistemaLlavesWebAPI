@@ -26,6 +26,11 @@ jobs:
         run: |
           dotnet test ./SistemaLlavesWebAPI/SistemaLlavesWebAPI.sln /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/coverage.opencover.xml /p:CoverletOutputDirectory=./
 
+      - name: List Files
+        shell: bash
+        run: |
+          ls -R
+
       - name: Adjust Coverage Paths (Windows)
         shell: powershell
         run: |
