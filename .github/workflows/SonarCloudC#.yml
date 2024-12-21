@@ -18,28 +18,47 @@ jobs:
           java-version: 17
           distribution: 'zulu'
 
-      - uses: actions/checkout@v4
+      - name: Check out code
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Run Tests with Coverage (modify as needed)
-        shell: powershell
-        run: |
-          dotnet test ./TestServices/TestServices.csproj --logger "trx;LogFileName=TestResults.trx" /p:CollectCoverage=true /coveragedir="coverage"
-      - name: Install SonarQube Cloud scanner
+      - name: Install .NET tools
         shell: powershell
         run: |
           dotnet tool install --global dotnet-sonarscanner
+          dotnet tool install --global coverlet.console
       - name: Add .NET Tools to PATH
         shell: powershell
         run: |
           $env:PATH += ";$($env:USERPROFILE)\.dotnet\tools"
-      - name: Build and analyze with SonarCloud
+
+      - name: Restore dependencies
+        shell: powershell
+        run: |
+          dotnet restore ./SistemaLlavesWebAPI/SistemaLlavesWebAPI.sln
+
+      - name: Run tests with coverage
+        shell: powershell
+        run: |
+          dotnet test ./TestServices/TestServices.csproj --logger "trx;LogFileName=TestResults.trx" --collect:"XPlat Code Coverage" /p:CoverletOutputFormat=opencover /p:CoverletOutput=./coverage/
+
+      - name: Prepare SonarCloud analysis
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: |
-         dotnet-sonarscanner begin /k:"Braylin20_SistemaLlavesWebAPI" /o:"braylin20" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.cs.vstest.reportsPaths="TestServices/TestResults/TestResults.trx" /d:sonar.coverage.reportsPaths="coverage"
-          dotnet build ./SistemaLlavesWebAPI/SistemaLlavesWebAPI.sln
-          dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+          dotnet-sonarscanner begin /k:"Braylin20_SistemaLlavesWebAPI" /o:"braylin20" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.cs.vstest.reportsPaths="TestServices/TestResults/TestResults.trx" /d:sonar.cs.opencover.reportsPaths="./coverage/coverage.opencover.xml"
+
+      - name: Build solution
+        shell: powershell
+        run: |
+          dotnet build ./SistemaLlavesWebAPI/SistemaLlavesWebAPI.sln --configuration Release
+
+      - name: Run SonarCloud analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        shell: powershell
+        run: |
+          dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
