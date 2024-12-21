@@ -97,5 +97,19 @@ namespace TestServices.Services
             Assert.IsNotNull(dbWarranty);
             Assert.AreEqual(updatedWarranty.Descripcion, dbWarranty.Descripcion);
         }
+
+
+        [TestMethod]
+        public async Task DeleteAsync_ShouldThrowKeyNotFoundException_WhenWarrantyNotFound()
+        {
+            // Arrange
+            int invalidId = 999; // ID que no existe
+
+            // Act & Assert
+            await Assert.ThrowsExceptionAsync<KeyNotFoundException>(async () =>
+            {
+                await _service.DeleteAsync(invalidId);
+            });
+        }
     }
 }
