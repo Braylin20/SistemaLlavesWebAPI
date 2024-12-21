@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Shared.Models;
 using SistemaLlavesWebAPI.Dal;
+using SistemaLlavesWebAPI.Interfaces;
 
 namespace SistemaLlavesWebAPI.Controllers
 {
@@ -14,25 +15,25 @@ namespace SistemaLlavesWebAPI.Controllers
     [ApiController]
     public class ProductosController : ControllerBase
     {
-        private readonly Context _context;
+        private readonly IProductService productService;
 
-        public ProductosController(Context context)
+        public ProductosController(IProductService productService)
         {
-            _context = context;
+            this.productService = productService;
         }
 
         // GET: api/Productos
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Productos>>> GetProductos()
         {
-            return await _context.Productos.ToListAsync();
+            return await productService.GetAsync();
         }
 
         // GET: api/Productos/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Productos>> GetProductos(int id)
         {
-            var productos = await _context.Productos.FindAsync(id);
+            var productos = await productService.GetById(id);
 
             if (productos == null)
             {
@@ -47,30 +48,17 @@ namespace SistemaLlavesWebAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProductos(int id, Productos productos)
         {
-            if (id != productos.ProductoId)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(productos).State = EntityState.Modified;
-
+            if (id != productos.ProductoId) return BadRequest();
             try
             {
-                await _context.SaveChangesAsync();
+                var product = await productService.PutAsync(productos);
+                return Ok(product);
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                if (!ProductosExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return BadRequest(ex.Message);
             }
-
-            return NoContent();
+            
         }
 
         // POST: api/Productos
@@ -78,9 +66,7 @@ namespace SistemaLlavesWebAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Productos>> PostProductos(Productos productos)
         {
-            _context.Productos.Add(productos);
-            await _context.SaveChangesAsync();
-
+            if (!await productService.AddAsync(productos)) return BadRequest();
             return CreatedAtAction("GetProductos", new { id = productos.ProductoId }, productos);
         }
 
@@ -88,21 +74,11 @@ namespace SistemaLlavesWebAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProductos(int id)
         {
-            var productos = await _context.Productos.FindAsync(id);
-            if (productos == null)
-            {
-                return NotFound();
-            }
+            var product = await productService.DeleteAsync(id);
 
-            _context.Productos.Remove(productos);
-            await _context.SaveChangesAsync();
+            if (product is null) return NotFound(id);
 
-            return NoContent();
-        }
-
-        private bool ProductosExists(int id)
-        {
-            return _context.Productos.Any(e => e.ProductoId == id);
+            return Ok(product);
         }
     }
 }
