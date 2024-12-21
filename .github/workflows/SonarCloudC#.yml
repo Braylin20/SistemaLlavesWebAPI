@@ -21,10 +21,20 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Install SonarQube Cloud scanner
+        shell: powershell
+        run: |
+          dotnet tool install --global dotnet-sonarscanner
+
+      - name: Add .NET Tools to PATH
+        shell: powershell
+        run: |
+          $env:PATH += ";$($env:USERPROFILE)\.dotnet\tools"
+
       - name: Run Tests with Coverage
         shell: powershell
         run: |
-          dotnet test ./TestServices/TestServices.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/coverage.opencover.xml /p:CoverletOutputDirectory=TestServices/TestResults
+          dotnet test ./TestServices/TestServices.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestServices/TestResults/coverage.opencover.xml /p:CoverletOutputDirectory=TestServices/TestResults
 
       - name: Adjust Coverage Paths (Windows)
         shell: powershell
