@@ -21,15 +21,15 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install SonarQube Cloud scanner
-        shell: powershell
-        run: |
-          dotnet tool install --global dotnet-sonarscanner
-
       - name: Run Tests with Coverage
         shell: powershell
         run: |
-          dotnet test ./SistemaLlavesWebAPI/SistemaLlavesWebAPI.sln /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/coverage.opencover.xml
+          dotnet test ./SistemaLlavesWebAPI/SistemaLlavesWebAPI.sln /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/coverage.opencover.xml /p:CoverletOutputDirectory=./
+
+      - name: Adjust Coverage Paths (Windows)
+        shell: powershell
+        run: |
+          (Get-Content TestResults/coverage.opencover.xml) -replace 'C:\\Users\\eliez\\source\\repos\\SISTEMA-API\\', './' | Set-Content TestResults/coverage.opencover.xml
 
       - name: Build and analyze
         env:
