@@ -39,10 +39,11 @@ jobs:
           dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
 
       - name: Run tests and generate coverage
+        shell: powershell
         continue-on-error: true
         run: |
           dotnet test ./TestServices/TestServices.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=${{ runner.temp }}/coverage.opencover.xml
-          
+              
       - name: Verify coverage file
         shell: powershell
         run: |
