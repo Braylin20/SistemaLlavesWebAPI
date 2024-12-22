@@ -45,8 +45,11 @@ namespace SistemaLlavesWebAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Garantias>> PostGarantias(Garantias garantias)
         {
-           if(!await _warrantyService.AddAsync(garantias)) return BadRequest();
-         
+            if (!await _warrantyService.AddAsync(garantias))
+            {
+                return BadRequest();
+            }
+
             return CreatedAtAction("GetGarantias", new { id = garantias.GarantiaId }, garantias);
         }
 
@@ -56,7 +59,11 @@ namespace SistemaLlavesWebAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutGarantias(int id, Garantias garantias)
         {
-           if(id != garantias.GarantiaId) return BadRequest();
+            if (id != garantias.GarantiaId)
+            {
+                return BadRequest();
+            }
+
             try
             {
                 var updatedWarranty = await _warrantyService.PutAsync(garantias);
@@ -81,6 +88,6 @@ namespace SistemaLlavesWebAPI.Controllers
             return NoContent();
         }
 
-    
+
     }
 }
