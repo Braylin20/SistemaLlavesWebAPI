@@ -59,6 +59,7 @@ namespace TestPrueba.Services
         public async Task PutAsync_ShouldUpdateProduct()
         {
             // Arrange
+            var nonExistProduct = new Productos { ProductoId = 10, Descripcion = "Producto Original" };
             var producto = new Productos { ProductoId = 1, Descripcion = "Producto Original" };
             _context.Productos.Add(producto);
             await _context.SaveChangesAsync();
@@ -67,15 +68,15 @@ namespace TestPrueba.Services
             
             // Act
             var result = await _service.PutAsync(updatedProduct);
+            var resultNonExistProuct = await _service.PutAsync(nonExistProduct);
 
             // Assert
            
             
 
             var productoEnBaseDeDatos = await _context.Productos.FindAsync(1);
-            var productNull = await _context.Productos.FindAsync(15);
 
-            Assert.False(productNull != null);
+            Assert.False(resultNonExistProuct);
 
             Assert.NotNull(productoEnBaseDeDatos);
             Assert.Equal("Producto Actualizado", productoEnBaseDeDatos.Descripcion);
