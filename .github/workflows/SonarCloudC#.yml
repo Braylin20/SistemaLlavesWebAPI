@@ -38,14 +38,11 @@ jobs:
           New-Item -Path .\.sonar\scanner -ItemType Directory
           dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
 
-
-      - name: Run tests and collect coverage
-        shell: powershell
-        continue-on-error: true  # Permitir que falle sin detener el workflow
+      - name: Run tests and generate coverage
+        continue-on-error: true
         run: |
-          dotnet test ./TestServices/TestServices.csproj --collect:"XPlat Code Coverage"
-          $coveragePath = Get-ChildItem -Recurse -Filter "coverage.cobertura.xml" | Select-Object -ExpandProperty FullName
-          Copy-Item $coveragePath ${{ github.workspace }}\coverage.cobertura.xml
+          dotnet test ./TestServices/TestServices.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=${{ runner.temp }}/coverage.opencover.xml
+
       - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -53,5 +50,4 @@ jobs:
         run: |
           .\.sonar\scanner\dotnet-sonarscanner begin /k:"Braylin20_SistemaLlavesWebAPI" /o:"braylin20" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="${{ github.workspace }}\coverage.cobertura.xml"
           dotnet build ./SistemaLlavesWebAPI/SistemaLlavesWebAPI.sln
-          dotnet test ./TestServices/TestServices.csproj --collect:"XPlat Code Coverage"
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
