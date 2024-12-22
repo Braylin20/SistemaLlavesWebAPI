@@ -42,7 +42,7 @@ jobs:
         shell: powershell
         continue-on-error: true
         run: |
-          dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=${{ runner.temp }}/coverage.opencover.xml
+          dotnet test ./TestServices /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=${{ runner.temp }}/coverage.opencover.xml
               
       - name: Verify coverage file
         shell: powershell
