@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Shared.Models;
 using SistemaLlavesWebAPI.Dal;
 using SistemaLlavesWebAPI.Services;
@@ -102,5 +103,23 @@ namespace TestServices.Services
             // Act & Assert
             Assert.Null(result);
         }
+
+        [Fact]
+        public async Task GetGarantias_ById_ReturnsGarantia_WhenIdIsValid()
+        {
+            // Arrange
+            var garantia = new Garantias { GarantiaId = 1, Descripcion = "Garantía 1" };
+            _context.Garantias.Add(garantia);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var result = await _service.GetById(1);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(garantia.GarantiaId, result.GarantiaId); 
+            Assert.Equal(garantia.Descripcion, result.Descripcion); 
+        }
+
     }
 }
