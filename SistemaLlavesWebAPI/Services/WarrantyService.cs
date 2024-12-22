@@ -14,10 +14,6 @@ namespace SistemaLlavesWebAPI.Services
             return await _context.Garantias.ToListAsync();
         }
 
-        public async Task<Garantias?> GetById(int id)
-        {
-            return await _context.Garantias.FindAsync(id);
-        }
 
         public async Task<bool> AddAsync(Garantias garantia)
         {
@@ -39,13 +35,16 @@ namespace SistemaLlavesWebAPI.Services
         public async Task<Garantias?> DeleteAsync(int id)
         {
             var warranty = await _context.Garantias.FindAsync(id);
-
             if (warranty is null)  return null;
-
             _context.Garantias.Remove(warranty);
             await _context.SaveChangesAsync();
 
             return warranty;
+        }
+
+        public async Task<Garantias?> GetById(int id)
+        {
+            return await _context.Garantias.FindAsync(id);
         }
     }
 }

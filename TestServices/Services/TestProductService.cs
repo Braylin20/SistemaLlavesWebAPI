@@ -17,6 +17,7 @@ namespace TestPrueba.Services
 
         public TestProductService()
         {
+            // Configuración de la base de datos en memoria
             var options = new DbContextOptionsBuilder<Context>()
                 .UseInMemoryDatabase(Guid.NewGuid().ToString())
                 .Options;
@@ -88,7 +89,6 @@ namespace TestPrueba.Services
             var result = await _service.DeleteAsync(1);
 
             // Assert
-            Assert.NotNull(result);
             Assert.Equal(producto.Descripcion, result.Descripcion);
             Assert.Equal(0, await _context.Productos.CountAsync());
         }

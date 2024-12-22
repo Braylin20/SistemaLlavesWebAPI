@@ -94,13 +94,16 @@ namespace TestServices.Services
         }
 
         [Fact]
-        public async Task DeleteAsync_ShouldReturnFalse_WhenProducNull()
+        public async Task DeleteAsync_ShouldThrowKeyNotFoundException_WhenWarrantyNotFound()
         {
             // Arrange
-            
-            var result = await _service.DeleteAsync(2);
+            int invalidId = 999; // ID que no existe
+
             // Act & Assert
-            Assert.Null(result);
+            await Assert.ThrowsAsync<KeyNotFoundException>(async () =>
+            {
+                await _service.DeleteAsync(invalidId);
+            });
         }
     }
 }
