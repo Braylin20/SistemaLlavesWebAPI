@@ -16,7 +16,7 @@ namespace TestServices.Services
         public TestWarrantyService()
         {
             var options = new DbContextOptionsBuilder<Context>()
-                .UseInMemoryDatabase("TestWarrantyDatabase")
+                .UseInMemoryDatabase($"TestWarrantyDatabase_{Guid.NewGuid()}") // Base de datos única
                 .Options;
 
             _context = new Context(options);
@@ -48,6 +48,7 @@ namespace TestServices.Services
         [Fact]
         public async Task AddAsync_ShouldAddWarranty()
         {
+            _context.Database.EnsureDeleted();
             // Arrange
             var warranty = new Garantias { GarantiaId = 1, Descripcion = "Garantía Nueva" };
 
@@ -107,6 +108,7 @@ namespace TestServices.Services
         [Fact]
         public async Task GetGarantias_ById_ReturnsGarantia_WhenIdIsValid()
         {
+            _context.Database.EnsureDeleted();
             // Arrange
             var garantia = new Garantias { GarantiaId = 1, Descripcion = "Garantía 1" };
             _context.Garantias.Add(garantia);

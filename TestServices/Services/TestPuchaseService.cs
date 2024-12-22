@@ -13,13 +13,13 @@ namespace TestServices.Services
     public class PurchaseServiceTests : IDisposable
     {
         private readonly Context _context;
-        private readonly IPuchaseService _service;
+        private readonly PuchaseService _service;
 
         public PurchaseServiceTests()
         {
             // Configuración inicial
             var options = new DbContextOptionsBuilder<Context>()
-                .UseInMemoryDatabase("TestDatabase")
+                .UseInMemoryDatabase($"TestWarrantyDatabase_{Guid.NewGuid()}")
                 .Options;
 
             _context = new Context(options);
@@ -37,15 +37,16 @@ namespace TestServices.Services
         [Fact]
         public async Task AddAsync_ShouldAddPurchase()
         {
-            // Arrange
-            var purchase = new Compras { CompraId = 1, Fecha = DateOnly.FromDateTime(DateTime.Now) };
+            var purchase = new Compras { CompraId = 5, Fecha = DateOnly.FromDateTime(DateTime.Now) };
 
             // Act
             var result = await _service.AddAsync(purchase);
 
             // Assert
-            Assert.True(result);
-            Assert.Equal(1, await _context.Compras.CountAsync());
+            Assert.True(result); // Verifica que el método regresa true
+            var addedPurchase = await _context.Compras.FindAsync(5); // Busca la entidad agregada
+            Assert.NotNull(addedPurchase); // Verifica que se agregó correctamente
+            Assert.Equal(1, await _context.Compras.CountAsync()); // Verifica el conteo
         }
 
         [Fact]
