@@ -42,7 +42,15 @@ jobs:
         continue-on-error: true
         run: |
           dotnet test ./TestServices/TestServices.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=${{ runner.temp }}/coverage.opencover.xml
-
+          
+      - name: Verify coverage file
+        shell: powershell
+        run: |
+          if (!(Test-Path -Path "${{ runner.temp }}\coverage.opencover.xml")) {
+            Write-Host "Coverage file not found!"
+            exit 1
+          }
+          
       - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
