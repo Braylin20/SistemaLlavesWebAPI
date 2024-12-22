@@ -21,11 +21,11 @@ public class ProductServices(Context _context) : IProductService
         _context.Productos.Add(producto);
         return await _context.SaveChangesAsync() > 0;
     }
-    public async Task<Productos> PutAsync(Productos producto)
+    public async Task<bool> PutAsync(Productos producto)
     {
-        var result = _context.Productos.Update(producto);
-        await _context.SaveChangesAsync();
-        return result.Entity;
+        _context.Update(producto);
+        _context.Entry(producto).State = EntityState.Detached;
+        return await _context.SaveChangesAsync() > 0 ;
 
     }
     public async Task<Productos> DeleteAsync(int id)
