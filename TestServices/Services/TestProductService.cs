@@ -89,7 +89,7 @@ namespace TestPrueba.Services
             var result = await _service.DeleteAsync(1);
 
             // Assert
-            Assert.Equal(producto.Descripcion, result.Descripcion);
+            Assert.True(result);
             Assert.Equal(0, await _context.Productos.CountAsync());
         }
 
