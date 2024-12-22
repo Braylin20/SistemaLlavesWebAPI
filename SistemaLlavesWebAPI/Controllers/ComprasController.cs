@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Shared.Models;
-using SistemaLlavesWebAPI.Dal;
+using SistemaLlavesWebAPI.Interfaces;
+using SistemaLlavesWebAPI.Services;
 
 namespace SistemaLlavesWebAPI.Controllers
 {
@@ -16,25 +11,25 @@ namespace SistemaLlavesWebAPI.Controllers
     [ExcludeFromCodeCoverage]
     public class ComprasController : ControllerBase
     {
-        private readonly Context _context;
+        private readonly IPuchaseService _puchaseService;
 
-        public ComprasController(Context context)
+        public ComprasController(IPuchaseService purchaseService)
         {
-            _context = context;
+            _puchaseService = purchaseService;
         }
 
         // GET: api/Compras
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Compras>>> GetCompras()
         {
-            return await _context.Compras.ToListAsync();
+            return await _puchaseService.GetAllAsync();
         }
 
         // GET: api/Compras/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Compras>> GetCompras(int id)
         {
-            var compras = await _context.Compras.FindAsync(id);
+            var compras = await _puchaseService.GetById(id);
 
             if (compras == null)
             {
@@ -47,32 +42,18 @@ namespace SistemaLlavesWebAPI.Controllers
         // PUT: api/Compras/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCompras(int id, Compras compras)
+        public async Task<IActionResult> PutCompras(int id, Compras compra)
         {
-            if (id != compras.CompraId)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(compras).State = EntityState.Modified;
-
+            if (id != compra.CompraId) return BadRequest();
             try
             {
-                await _context.SaveChangesAsync();
+                var compraActualizada = await _puchaseService.PutAsync(compra);
+                return Ok(compraActualizada);
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                if (!ComprasExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return BadRequest(ex.Message);
             }
-
-            return NoContent();
         }
 
         // POST: api/Compras
@@ -80,31 +61,20 @@ namespace SistemaLlavesWebAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Compras>> PostCompras(Compras compras)
         {
-            _context.Compras.Add(compras);
-            await _context.SaveChangesAsync();
+            if (!await _puchaseService.AddAsync(compras)) return BadRequest();
+            return CreatedAtAction("GetProductos", new { id = compras.CompraId }, compras);
 
-            return CreatedAtAction("GetCompras", new { id = compras.CompraId }, compras);
         }
 
         // DELETE: api/Compras/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCompras(int id)
         {
-            var compras = await _context.Compras.FindAsync(id);
-            if (compras == null)
-            {
-                return NotFound();
-            }
+            var puchase = await _puchaseService.DeleteAsync(id);
 
-            _context.Compras.Remove(compras);
-            await _context.SaveChangesAsync();
+            if (puchase is null) return NotFound(id);
 
-            return NoContent();
-        }
-
-        private bool ComprasExists(int id)
-        {
-            return _context.Compras.Any(e => e.CompraId == id);
+            return Ok(puchase);
         }
     }
 }
