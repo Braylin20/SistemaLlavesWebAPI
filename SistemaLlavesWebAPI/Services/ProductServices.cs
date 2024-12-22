@@ -8,7 +8,6 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace SistemaLlavesWebAPI.Services;
 
-[ExcludeFromCodeCoverage]
 public class ProductServices(Context _context) : IProductService
 {
 
