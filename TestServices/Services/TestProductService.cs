@@ -64,17 +64,23 @@ namespace TestPrueba.Services
             await _context.SaveChangesAsync();
 
             var updatedProduct = new Productos { ProductoId = 1, Descripcion = "Producto Actualizado" };
-
+            
             // Act
             var result = await _service.PutAsync(updatedProduct);
 
             // Assert
            
-            Assert.True(result);
+            
 
             var productoEnBaseDeDatos = await _context.Productos.FindAsync(1);
+            var productNull = await _context.Productos.FindAsync(15);
+
+            Assert.Null(productNull);
+
             Assert.NotNull(productoEnBaseDeDatos);
             Assert.Equal("Producto Actualizado", productoEnBaseDeDatos.Descripcion);
+
+            Assert.True(result);
         }
 
         [Fact]
