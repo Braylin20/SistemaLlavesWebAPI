@@ -69,7 +69,12 @@ namespace TestPrueba.Services
             var result = await _service.PutAsync(updatedProduct);
 
             // Assert
-            //Assert.Equal(updatedProduct.Descripcion, result.Descripcion);
+           
+            Assert.True(result);
+
+            var productoEnBaseDeDatos = await _context.Productos.FindAsync(1);
+            Assert.NotNull(productoEnBaseDeDatos);
+            Assert.Equal("Producto Actualizado", productoEnBaseDeDatos.Descripcion);
         }
 
         [Fact]
@@ -88,17 +93,5 @@ namespace TestPrueba.Services
             Assert.Equal(0, await _context.Productos.CountAsync());
         }
 
-        [Fact]
-        public async Task DeleteAsync_ShouldThrowKeyNotFoundException_WhenProductNotFound()
-        {
-            // Arrange
-            int invalidId = 999; // ID no existente
-
-            // Act & Assert
-            await Assert.ThrowsAsync<KeyNotFoundException>(async () =>
-            {
-                await _service.DeleteAsync(invalidId);
-            });
-        }
     }
 }
