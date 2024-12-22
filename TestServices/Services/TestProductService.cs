@@ -75,7 +75,7 @@ namespace TestPrueba.Services
             var productoEnBaseDeDatos = await _context.Productos.FindAsync(1);
             var productNull = await _context.Productos.FindAsync(15);
 
-            Assert.Null(productNull);
+            Assert.False(productNull != null);
 
             Assert.NotNull(productoEnBaseDeDatos);
             Assert.Equal("Producto Actualizado", productoEnBaseDeDatos.Descripcion);
