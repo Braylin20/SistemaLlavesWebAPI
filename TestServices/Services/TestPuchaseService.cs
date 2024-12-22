@@ -97,5 +97,23 @@ namespace TestServices.Services
             Assert.NotNull(dbPurchase);
             Assert.Equal(updatedPurchase.Fecha, dbPurchase.Fecha);
         }
+
+        [Fact]
+        public async Task GetCompra_ById_ReturnsGarantia_WhenIdIsValid()
+        {
+            // Arrange
+            var purchase = new Compras { CompraId = 1, Fecha = DateOnly.FromDateTime(DateTime.Now) };
+            _context.Compras.Add(purchase);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var result = await _service.GetById(1);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(purchase.CompraId, result.CompraId);
+         
+        }
+
     }
 }
