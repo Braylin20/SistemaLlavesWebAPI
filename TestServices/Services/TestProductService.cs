@@ -59,29 +59,40 @@ namespace TestPrueba.Services
         public async Task PutAsync_ShouldUpdateProduct()
         {
             // Arrange
-            var nonExistProduct = new Productos { ProductoId = 10, Descripcion = "Producto Original" };
+            
             var producto = new Productos { ProductoId = 1, Descripcion = "Producto Original" };
             _context.Productos.Add(producto);
             await _context.SaveChangesAsync();
 
             var updatedProduct = new Productos { ProductoId = 1, Descripcion = "Producto Actualizado" };
-            
+
             // Act
             var result = await _service.PutAsync(updatedProduct);
-            var resultNonExistProuct = await _service.PutAsync(nonExistProduct);
+            
 
             // Assert
-           
+
+
             
+            Assert.True(result);
 
             var productoEnBaseDeDatos = await _context.Productos.FindAsync(1);
 
-            Assert.False(resultNonExistProuct);
 
             Assert.NotNull(productoEnBaseDeDatos);
             Assert.Equal("Producto Actualizado", productoEnBaseDeDatos.Descripcion);
 
-            Assert.True(result);
+        }
+
+        [Fact]
+        public async Task PutAsync_ShouldReturnFalseWhenProductIsNull()
+        {
+            var nonExistProduct = new Productos { ProductoId = 10, Descripcion = "Producto Original" };
+
+
+            var resultNonExistProuct = await _service.PutAsync(nonExistProduct);
+
+            Assert.False(resultNonExistProuct);
         }
 
         [Fact]
@@ -98,6 +109,17 @@ namespace TestPrueba.Services
             // Assert
             Assert.True(result);
             Assert.Equal(0, await _context.Productos.CountAsync());
+        }
+
+        [Fact]
+        public async Task DeleteAsync_ShouldReturnFalseWhenProductIsNull()
+        {
+            var nonExistProduct = new Productos { ProductoId = 10, Descripcion = "Producto Original" };
+
+
+            var resultNonExistProuct = await _service.PutAsync(nonExistProduct);
+
+            Assert.False(resultNonExistProuct);
         }
 
     }
