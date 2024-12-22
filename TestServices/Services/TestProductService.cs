@@ -117,9 +117,21 @@ namespace TestPrueba.Services
             var nonExistProduct = new Productos { ProductoId = 10, Descripcion = "Producto Original" };
 
 
-            var resultNonExistProuct = await _service.PutAsync(nonExistProduct);
+            var resultNonExistProuct = await _service.DeleteAsync(nonExistProduct.ProductoId);
 
             Assert.False(resultNonExistProuct);
+        }
+        [Fact]
+        public async Task GetbyId_ShouldReturnProductById()
+        {
+            Productos producto = new Productos { ProductoId = 1, Descripcion = "Producto 2" };
+            _context.Productos.Add(producto);
+            await _context.SaveChangesAsync();
+
+
+            var result = await _service.GetById(producto.ProductoId);
+
+            Assert.Equal(result, producto);
         }
 
     }
