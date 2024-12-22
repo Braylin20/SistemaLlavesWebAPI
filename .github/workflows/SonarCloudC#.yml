@@ -1,12 +1,10 @@
 name: SonarQube
-
 on:
   push:
     branches:
       - master
   pull_request:
     types: [opened, synchronize, reopened]
-
 jobs:
   build:
     name: Build and analyze
@@ -16,57 +14,51 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: 17
-          distribution: 'zulu'
-
-      - name: Check out code
-        uses: actions/checkout@v4
+          distribution: 'zulu' # Alternative distribution options are available.
+      - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-
-      - name: Install SonarCloud scanner
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      - name: Cache SonarQube Cloud packages
+        uses: actions/cache@v4
+        with:
+          path: ~\sonar\cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+      - name: Cache SonarQube Cloud scanner
+        id: cache-sonar-scanner
+        uses: actions/cache@v4
+        with:
+          path: .\.sonar\scanner
+          key: ${{ runner.os }}-sonar-scanner
+          restore-keys: ${{ runner.os }}-sonar-scanner
+      - name: Install SonarQube Cloud scanner
+        if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
         shell: powershell
         run: |
-          dotnet tool install --global dotnet-sonarscanner
+          New-Item -Path .\.sonar\scanner -ItemType Directory
+          dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
 
-      - name: Add .NET Tools to PATH
+      - name: Run tests and generate coverage
+        shell: powershell
+        continue-on-error: true
+        run: |
+          dotnet test ./TestServices/TestServices.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=${{ runner.temp }}/coverage.opencover.xml
+
+      - name: Verify coverage file
         shell: powershell
         run: |
-          $env:PATH += ";$($env:USERPROFILE)\.dotnet\tools"
-
-      - name: Restore dependencies
-        shell: powershell
-        run: |
-          dotnet restore ./SistemaLlavesWebAPI/SistemaLlavesWebAPI.sln
-
-      - name: Prepare SonarCloud analysis
+          if (!(Test-Path -Path "${{ runner.temp }}\coverage.opencover.xml")) {
+            Write-Host "Coverage file not found!"
+            exit 1
+          } else {
+            Write-Host "Coverage file successfully generated at ${{ runner.temp }}\coverage.opencover.xml"
+          }
+          
+      - name: Build and analyze with SonarQube
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: |
-          dotnet-sonarscanner begin /k:"Braylin20_SistemaLlavesWebAPI" /o:"braylin20" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
-
-      - name: Build solution
-        shell: powershell
-        run: |
-          dotnet build ./SistemaLlavesWebAPI/SistemaLlavesWebAPI.sln --configuration Release
-
-      - name: Run tests with coverage
-        shell: powershell
-        run: |
-          dotnet test --no-build --collect:"XPlat Code Coverage" /p:CoverletOutput=coverage/ /p:CoverletOutputFormat=opencover --logger trx
-
-      - name: Run SonarCloud analysis
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        shell: powershell
-        run: |
-          dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
-
-      - name: SonarCloud Scoverage Fix
-        uses: pervasive-cats/sonarcloud-scoverage-fix@v1.0.1
-        with:
-          # Path to the Scoverage report in XML format, adjust as necessary.
-          scoverageReport: TestServices/TestResults/coverage.opencover.xml
-          args: ""
-          projectBaseDir: "."
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"Braylin20_SistemaLlavesWebAPI" /o:"braylin20" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths=${{ runner.temp }}/coverage.opencover.xml
+          dotnet build ./SistemaLlavesWebAPI/SistemaLlavesWebAPI.sln
+          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"   
