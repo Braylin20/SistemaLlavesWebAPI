@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Shared.Models;
 using SistemaLlavesWebAPI.Dal;
 using SistemaLlavesWebAPI.Interfaces;
@@ -14,7 +13,6 @@ namespace SistemaLlavesWebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [ExcludeFromCodeCoverage]
     [ExcludeFromCodeCoverage]
     public class ProductosController : ControllerBase
     {
