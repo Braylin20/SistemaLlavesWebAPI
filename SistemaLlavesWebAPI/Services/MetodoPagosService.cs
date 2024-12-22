@@ -18,11 +18,15 @@ namespace SistemaLlavesWebAPI.Services
             _context.MetodosPagos.Add(metodosPago);
             return await _context.SaveChangesAsync() > 0;
         }
-        public async Task<MetodosPagos> PutAsync(MetodosPagos metodosPago)
+        public async Task<bool> PutAsync(MetodosPagos metodosPago)
         {
-            var result = _context.MetodosPagos.Update(metodosPago);
-            await _context.SaveChangesAsync();
-            return result.Entity;
+            var existingEntity = await _context.MetodosPagos.FindAsync(metodosPago.MetodoPagoId);
+            if (existingEntity is null) return false;
+
+            _context.Entry(existingEntity).State = EntityState.Detached;
+
+            _context.Update(metodosPago);
+            return await _context.SaveChangesAsync() > 0;
         }
         public async Task<bool> DeleteAsync(int id)
         {
