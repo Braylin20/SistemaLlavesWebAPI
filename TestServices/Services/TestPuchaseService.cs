@@ -81,6 +81,16 @@ namespace TestServices.Services
         }
 
         [Fact]
+public async Task DeleteAsync_ShouldReturnNull_WhenPurchaseNotFound()
+{
+    // Act
+    var result = await _service.DeleteAsync(999); // ID inexistente
+
+    // Assert
+    Assert.Null(result); // Verifica que devuelve null
+}
+
+        [Fact]
         public async Task PutAsync_ShouldUpdatePurchase()
         {
             // Arrange
@@ -97,6 +107,19 @@ namespace TestServices.Services
             var dbPurchase = await _context.Compras.FindAsync(1);
             Assert.NotNull(dbPurchase);
             Assert.Equal(updatedPurchase.Fecha, dbPurchase.Fecha);
+        }
+
+        [Fact]
+        public async Task PutAsync_ShouldReturnNull_WhenPurchaseNotFound()
+        {
+            // Arrange
+            var updatedPurchase = new Compras { CompraId = 999, Fecha = DateOnly.FromDateTime(DateTime.Now.AddDays(1)) }; // ID inexistente
+
+            // Act
+            var result = await _service.PutAsync(updatedPurchase);
+
+            // Assert
+            Assert.Null(result); // Verifica que devuelve null
         }
 
         [Fact]

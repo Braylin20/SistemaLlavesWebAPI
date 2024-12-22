@@ -38,10 +38,15 @@ namespace SistemaLlavesWebAPI.Services
             return puchase;
         }
 
-        public async Task<Compras> PutAsync(Compras compra)
+        public async Task<Compras?> PutAsync(Compras compra)
         {
-            var existingCompra = await _context.Compras.FindAsync(compra.CompraId) ??
-                throw new KeyNotFoundException($"Compra with ID {compra.CompraId} was not found");
+            var existingCompra = await _context.Compras.FindAsync(compra.CompraId);
+
+            if(existingCompra is null)
+            {
+                return null;
+            }
+               
 
             _context.Entry(existingCompra).State = EntityState.Detached;
 
