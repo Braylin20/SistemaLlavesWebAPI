@@ -30,6 +30,7 @@ namespace TestServices.Services
             // Limpieza al final de cada prueba
             _context.Database.EnsureDeleted();
             _context.Dispose();
+            GC.SuppressFinalize(this);
         }
 
         [Fact]
