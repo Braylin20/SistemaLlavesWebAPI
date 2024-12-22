@@ -13,6 +13,12 @@ namespace SistemaLlavesWebAPI.Services
         {
             return await _context.Garantias.ToListAsync();
         }
+
+        public async Task<Garantias?> GetById(int id)
+        {
+            return await _context.Garantias.FindAsync(id);
+        }
+
         public async Task<bool> AddAsync(Garantias garantia)
         {
             await _context.Garantias.AddAsync(garantia);
@@ -30,9 +36,12 @@ namespace SistemaLlavesWebAPI.Services
             await _context.SaveChangesAsync();
             return result.Entity;
         }
-        public async Task<Garantias> DeleteAsync(int id)
+        public async Task<Garantias?> DeleteAsync(int id)
         {
-            var warranty = await _context.Garantias.FindAsync(id) ?? throw new KeyNotFoundException($"Warranty with ID {id} was not found.");
+            var warranty = await _context.Garantias.FindAsync(id);
+
+            if (warranty is null)  return null;
+
             _context.Garantias.Remove(warranty);
             await _context.SaveChangesAsync();
 

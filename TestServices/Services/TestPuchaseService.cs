@@ -12,7 +12,7 @@ namespace TestServices.Services
     public class PurchaseServiceTests : IDisposable
     {
         private readonly Context _context;
-        private readonly PurchaseService _service;
+        private readonly PuchaseService _service;
 
         public PurchaseServiceTests()
         {
@@ -22,7 +22,7 @@ namespace TestServices.Services
                 .Options;
 
             _context = new Context(options);
-            _service = new PurchaseService(_context);
+            _service = new PuchaseService(_context);
         }
 
         public void Dispose()
@@ -56,7 +56,7 @@ namespace TestServices.Services
             await _context.SaveChangesAsync();
 
             // Act
-            var result = await _service.GetAsync();
+            var result = await _service.GetAllAsync();
 
             // Assert
             Assert.Equal(2, result.Count);
@@ -76,6 +76,20 @@ namespace TestServices.Services
             // Assert
             Assert.Equal(0, await _context.Compras.CountAsync());
             Assert.Equal(purchase, result);
+        }
+
+
+        [Fact]
+        public async Task DeleteAsync_ShouldReturnNull_WhenPuchaseNull()
+        {
+            // Arrange
+          
+
+            // Act
+            var result = await _service.DeleteAsync(1);
+
+            // Assert
+            Assert.Null(result);
         }
 
         [Fact]
