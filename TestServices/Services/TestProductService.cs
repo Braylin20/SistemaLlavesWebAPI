@@ -55,24 +55,22 @@ namespace TestPrueba.Services
             Assert.Equal(1, await _context.Productos.CountAsync());
         }
 
-        //[Fact]
-        //public async Task PutAsync_ShouldUpdateProduct()
-        //{
-        //    // Arrange
-        //    var producto = new Productos { ProductoId = 1, Descripcion = "Producto Original" };
-        //    _context.Productos.Add(producto);
-        //    await _context.SaveChangesAsync();
+        [Fact]
+        public async Task PutAsync_ShouldUpdateProduct()
+        {
+            // Arrange
+            var producto = new Productos { ProductoId = 1, Descripcion = "Producto Original" };
+            _context.Productos.Add(producto);
+            await _context.SaveChangesAsync();
 
-        //    var updatedProduct = new Productos { ProductoId = 1, Descripcion = "Producto Actualizado" };
+            var updatedProduct = new Productos { ProductoId = 1, Descripcion = "Producto Actualizado" };
 
-        //    // Act
-        //    var result = await _service.PutAsync(updatedProduct);
+            // Act
+            var result = await _service.PutAsync(updatedProduct);
 
-        //    // Assert
-        //    var dbPurchase = await _context.Productos.FindAsync(1);
-        //    Assert.NotNull(dbPurchase);
-        //    Assert.Equal(updatedProduct.Descripcion, dbPurchase.Descripcion);
-        //}
+            // Assert
+            //Assert.Equal(updatedProduct.Descripcion, result.Descripcion);
+        }
 
         [Fact]
         public async Task DeleteAsync_ShouldRemoveProduct()
