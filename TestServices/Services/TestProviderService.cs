@@ -96,4 +96,28 @@ public class TestProviderService : IDisposable
         // Act & Assert
         await Assert.ThrowsAsync<KeyNotFoundException>(() => _service.DeleteAsync(99));
     }
+    
+    [Fact]
+    public async Task GetByIdAsync_ShouldReturnProvider_WhenProviderExists()
+    {
+        // Arrange
+        var provider = new Proveedores { ProovedorId = 1, Nombre = "Proveedor Existente" };
+        _context.Proveedores.Add(provider);
+        await _context.SaveChangesAsync();
+
+        // Act
+        var result = await _service.GetByIdAsync(1);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(provider.ProovedorId, result.ProovedorId);
+        Assert.Equal(provider.Nombre, result.Nombre);
+    }
+
+    [Fact]
+    public async Task GetByIdAsync_ShouldThrowException_WhenProviderNotFound()
+    {
+        // Act & Assert
+        await Assert.ThrowsAsync<KeyNotFoundException>(() => _service.GetByIdAsync(99));
+    }
 }

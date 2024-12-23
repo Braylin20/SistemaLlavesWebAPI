@@ -96,4 +96,28 @@ public class TestClientService : IDisposable
         // Act & Assert
         await Assert.ThrowsAsync<KeyNotFoundException>(() => _service.DeleteAsync(99));
     }
+    
+    [Fact]
+    public async Task GetByIdAsync_ShouldReturnClient_WhenClientExists()
+    {
+        // Arrange
+        var client = new Clientes { ClienteId = 1, Nombre = "Cliente Existente" };
+        _context.Clientes.Add(client);
+        await _context.SaveChangesAsync();
+
+        // Act
+        var result = await _service.GetByIdAsync(1);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(client.ClienteId, result.ClienteId);
+        Assert.Equal(client.Nombre, result.Nombre);
+    }
+
+    [Fact]
+    public async Task GetByIdAsync_ShouldThrowException_WhenClientNotFound()
+    {
+        // Act & Assert
+        await Assert.ThrowsAsync<KeyNotFoundException>(() => _service.GetByIdAsync(99));
+    }
 }
