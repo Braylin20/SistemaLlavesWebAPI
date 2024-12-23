@@ -39,4 +39,10 @@ public class ProviderService(Context context) : IProviderService
         await context.SaveChangesAsync();
         return proveedor;
     }
+    
+    public async Task<Proveedores> GetByIdAsync(int proveedorId)
+    {
+        var proveedor = await context.Proveedores.FindAsync(proveedorId);
+        return proveedor ?? throw new KeyNotFoundException("Proveedor no encontrado");
+    }
 }

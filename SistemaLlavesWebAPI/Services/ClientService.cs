@@ -39,4 +39,10 @@ public class ClientService(Context context) : IClientService
         await context.SaveChangesAsync();
         return cliente;
     }
+    
+    public async Task<Clientes> GetByIdAsync(int clienteId)
+    {
+        var cliente = await context.Clientes.FindAsync(clienteId);
+        return cliente ?? throw new KeyNotFoundException("Cliente no encontrado");
+    }
 }
