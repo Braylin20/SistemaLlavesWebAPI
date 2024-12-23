@@ -5,13 +5,18 @@ using SistemaLlavesWebAPI.Interfaces;
 
 namespace SistemaLlavesWebAPI.Services
 {
-    public class PurchaseService(Context context) : IPuchaseService
+    public class PuchaseService(Context context) : IPuchaseService
     {
         private readonly Context _context = context;
 
-        public async Task<List<Compras>> GetAsync()
+        public async Task<List<Compras>> GetAllAsync()
         {
             return await _context.Compras.ToListAsync();
+        }
+
+        public async Task<Compras?>GetById(int id)
+        {
+            return await _context.Compras.FindAsync(id);
         }
 
         public async Task<bool> AddAsync(Compras compra)
@@ -21,9 +26,11 @@ namespace SistemaLlavesWebAPI.Services
             return await _context.SaveChangesAsync() > 0;
         }
 
-        public async Task<Compras> DeleteAsync(int id)
+        public async Task<Compras?> DeleteAsync(int id)
         {
-            var puchase = await _context.Compras.FindAsync(id) ?? throw new KeyNotFoundException($"Puchase with ID {id} was no found");
+            var puchase = await _context.Compras.FindAsync(id);
+
+            if (puchase is null) return null;
 
             _context.Compras.Remove(puchase);
             await _context.SaveChangesAsync();
@@ -31,10 +38,15 @@ namespace SistemaLlavesWebAPI.Services
             return puchase;
         }
 
-        public async Task<Compras> PutAsync(Compras compra)
+        public async Task<Compras?> PutAsync(Compras compra)
         {
-            var existingCompra = await _context.Compras.FindAsync(compra.CompraId) ??
-                throw new KeyNotFoundException($"Compra with ID {compra.CompraId} was not found");
+            var existingCompra = await _context.Compras.FindAsync(compra.CompraId);
+
+            if(existingCompra is null)
+            {
+                return null;
+            }
+               
 
             _context.Entry(existingCompra).State = EntityState.Detached;
 

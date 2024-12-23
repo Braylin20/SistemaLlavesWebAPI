@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Shared.Models;
 using SistemaLlavesWebAPI.Dal;
 using SistemaLlavesWebAPI.Services;
@@ -15,7 +16,7 @@ namespace TestServices.Services
         public TestWarrantyService()
         {
             var options = new DbContextOptionsBuilder<Context>()
-                .UseInMemoryDatabase("TestWarrantyDatabase")
+                .UseInMemoryDatabase($"TestWarrantyDatabase_{Guid.NewGuid()}") // Base de datos única
                 .Options;
 
             _context = new Context(options);
@@ -47,6 +48,7 @@ namespace TestServices.Services
         [Fact]
         public async Task AddAsync_ShouldAddWarranty()
         {
+            _context.Database.EnsureDeleted();
             // Arrange
             var warranty = new Garantias { GarantiaId = 1, Descripcion = "Garantía Nueva" };
 
@@ -94,16 +96,32 @@ namespace TestServices.Services
         }
 
         [Fact]
-        public async Task DeleteAsync_ShouldThrowKeyNotFoundException_WhenWarrantyNotFound()
+        public async Task DeleteAsync_ShouldReturnFalse_WhenProducNull()
         {
             // Arrange
-            int invalidId = 999; // ID que no existe
 
+            var result = await _service.DeleteAsync(2);
             // Act & Assert
-            await Assert.ThrowsAsync<KeyNotFoundException>(async () =>
-            {
-                await _service.DeleteAsync(invalidId);
-            });
+            Assert.Null(result);
         }
+
+        [Fact]
+        public async Task GetGarantias_ById_ReturnsGarantia_WhenIdIsValid()
+        {
+            _context.Database.EnsureDeleted();
+            // Arrange
+            var garantia = new Garantias { GarantiaId = 1, Descripcion = "Garantía 1" };
+            _context.Garantias.Add(garantia);
+            await _context.SaveChangesAsync();
+
+            // Act
+            var result = await _service.GetById(1);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(garantia.GarantiaId, result.GarantiaId); 
+            Assert.Equal(garantia.Descripcion, result.Descripcion); 
+        }
+
     }
 }

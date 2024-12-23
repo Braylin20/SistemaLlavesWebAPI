@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Shared.Models;
-using SistemaLlavesWebAPI.Dal;
+using SistemaLlavesWebAPI.Interfaces;
+using SistemaLlavesWebAPI.Services;
 
 namespace SistemaLlavesWebAPI.Controllers
 {
@@ -16,25 +11,25 @@ namespace SistemaLlavesWebAPI.Controllers
     [ExcludeFromCodeCoverage]
     public class GarantiasController : ControllerBase
     {
-        private readonly Context _context;
+        private readonly IWarrantyService _warrantyService;
 
-        public GarantiasController(Context context)
+        public GarantiasController(IWarrantyService warrantyService)
         {
-            _context = context;
+            _warrantyService = warrantyService;
         }
 
         // GET: api/Garantias
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Garantias>>> GetGarantias()
         {
-            return await _context.Garantias.ToListAsync();
+            return await _warrantyService.GetAsync();
         }
 
         // GET: api/Garantias/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Garantias>> GetGarantias(int id)
         {
-            var garantias = await _context.Garantias.FindAsync(id);
+            var garantias = await _warrantyService.GetById(id);
 
             if (garantias == null)
             {
@@ -43,6 +38,21 @@ namespace SistemaLlavesWebAPI.Controllers
 
             return garantias;
         }
+
+
+        // POST: api/Garantias
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        public async Task<ActionResult<Garantias>> PostGarantias(Garantias garantias)
+        {
+            if (!await _warrantyService.AddAsync(garantias))
+            {
+                return BadRequest();
+            }
+
+            return CreatedAtAction("GetGarantias", new { id = garantias.GarantiaId }, garantias);
+        }
+
 
         // PUT: api/Garantias/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -54,57 +64,30 @@ namespace SistemaLlavesWebAPI.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(garantias).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                var updatedWarranty = await _warrantyService.PutAsync(garantias);
+                return Ok(updatedWarranty);
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                if (!GarantiasExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return BadRequest(ex.Message);
             }
-
-            return NoContent();
         }
 
-        // POST: api/Garantias
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Garantias>> PostGarantias(Garantias garantias)
-        {
-            _context.Garantias.Add(garantias);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetGarantias", new { id = garantias.GarantiaId }, garantias);
-        }
 
         // DELETE: api/Garantias/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteGarantias(int id)
         {
-            var garantias = await _context.Garantias.FindAsync(id);
+            var garantias = await _warrantyService.DeleteAsync(id);
             if (garantias == null)
             {
                 return NotFound();
             }
-
-            _context.Garantias.Remove(garantias);
-            await _context.SaveChangesAsync();
-
             return NoContent();
         }
 
-        private bool GarantiasExists(int id)
-        {
-            return _context.Garantias.Any(e => e.GarantiaId == id);
-        }
+
     }
 }
