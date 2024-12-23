@@ -41,8 +41,7 @@ namespace SistemaLlavesWebAPI.Services
                 throw new KeyNotFoundException($"La categoría con ID {categorias.CategoriaId} no existe.");
             }
 
-            existingCategory.Nombre = categorias.Nombre;
-            existingCategory.Descripcion = categorias.Descripcion;
+            existingCategory.Nombre = categorias.Nombre;       
       
             _context.Categorias.Update(existingCategory);
             await _context.SaveChangesAsync();
