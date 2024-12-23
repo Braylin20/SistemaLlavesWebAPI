@@ -73,11 +73,12 @@ public class ProveedoresController(IProviderService providerService) : Controlle
     {
         try
         {
-            return NoContent();
+            var deletedProveedor = await providerService.DeleteAsync(id);
+            return Ok(deletedProveedor); // Return the deleted entity or NoContent() as required.
         }
-        catch (KeyNotFoundException)
+        catch (KeyNotFoundException ex)
         {
-            return NotFound();
+            return NotFound(new { message = ex.Message });
         }
     }
 }
