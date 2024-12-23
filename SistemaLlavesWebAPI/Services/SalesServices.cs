@@ -30,13 +30,13 @@ namespace SistemaLlavesWebAPI.Services
 
         public async Task<bool> DeleteAsync(int ventaId)
         {
-            var venta = await _context.Categorias.FindAsync(ventaId);
+            var venta = await _context.Ventas.FindAsync(ventaId);
             if (venta == null)
             {
                 return false;
             }
 
-            _context.Categorias.Remove(venta);
+            _context.Ventas.Remove(venta);
             await _context.SaveChangesAsync();
             return true;
         }
@@ -46,6 +46,5 @@ namespace SistemaLlavesWebAPI.Services
             await _context.SaveChangesAsync();
             return result.Entity;
         }
-
     }
 }
