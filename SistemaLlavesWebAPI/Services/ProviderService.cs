@@ -7,38 +7,36 @@ namespace SistemaLlavesWebAPI.Services;
 
 public class ProviderService(Context context) : IProviderService
 {
-    private readonly Context _context = context;
-    
     public async Task<List<Proveedores>> GetAsync()
     {
-        return await _context.Proveedores.ToListAsync();
+        return await context.Proveedores.ToListAsync();
     }
     
     public async Task<bool> AddAsync(Proveedores proveedores)
     {
-        await _context.Proveedores.AddAsync(proveedores);
-        return await _context.SaveChangesAsync() > 0;
+        await context.Proveedores.AddAsync(proveedores);
+        return await context.SaveChangesAsync() > 0;
     }
     
     public async Task<Proveedores> PutAsync(Proveedores proveedores)
     {
-        var proveedorExists = await _context.Proveedores.FindAsync(proveedores.ProovedorId) ?? 
+        var proveedorExists = await context.Proveedores.FindAsync(proveedores.ProovedorId) ?? 
                               throw new KeyNotFoundException("Proveedor no encontrado");
         
-        _context.Entry(proveedorExists).State = EntityState.Detached;
+        context.Entry(proveedorExists).State = EntityState.Detached;
         
-        var result = _context.Proveedores.Update(proveedores);
-        await _context.SaveChangesAsync();
+        var result = context.Proveedores.Update(proveedores);
+        await context.SaveChangesAsync();
         return result.Entity;
     }
     
     public async Task<Proveedores> DeleteAsync(int proveedorId)
     {
-        var proveedor = await _context.Proveedores.FindAsync(proveedorId) ?? 
+        var proveedor = await context.Proveedores.FindAsync(proveedorId) ?? 
                         throw new KeyNotFoundException("Proveedor no encontrado");
         
-        _context.Proveedores.Remove(proveedor);
-        await _context.SaveChangesAsync();
+        context.Proveedores.Remove(proveedor);
+        await context.SaveChangesAsync();
         return proveedor;
     }
 }
