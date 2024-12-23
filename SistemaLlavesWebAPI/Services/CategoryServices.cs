@@ -51,7 +51,7 @@ namespace SistemaLlavesWebAPI.Services
 
         public async Task<bool> DeleteAsync(int categoriaId)
         {
-            var categoria = await _context.Categorias.FindAsync(categoriaId);
+            var categoria = await _context.Categorias.FirstOrDefaultAsync(c => c.CategoriaId == categoriaId);
             if (categoria == null)
             {
                 return false;
