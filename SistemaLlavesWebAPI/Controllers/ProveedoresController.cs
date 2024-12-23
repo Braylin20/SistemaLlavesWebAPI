@@ -73,7 +73,6 @@ public class ProveedoresController(IProviderService providerService) : Controlle
     {
         try
         {
-            var deletedProvider = await providerService.DeleteAsync(id);
             return NoContent();
         }
         catch (KeyNotFoundException)

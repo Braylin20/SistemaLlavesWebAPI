@@ -73,7 +73,6 @@ public class ClientesController(IClientService clientService) : ControllerBase
     {
         try
         {
-            var deletedClient = await clientService.DeleteAsync(id);
             return NoContent();
         }
         catch (KeyNotFoundException)
