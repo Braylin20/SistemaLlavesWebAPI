@@ -38,19 +38,27 @@ jobs:
           New-Item -Path .\.sonar\scanner -ItemType Directory
           dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
 
+      - name: Run tests and generate coverage
+        shell: powershell
+        continue-on-error: true
+        run: |
+          dotnet test ./TestServices/TestServices.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=${{ runner.temp }}/coverage.opencover.xml
 
-      - name: Run tests and collect coverage
+      - name: Verify coverage file
         shell: powershell
         run: |
-          dotnet test ./TestServices/TestServices.csproj --collect:"XPlat Code Coverage"
-          $coveragePath = Get-ChildItem -Recurse -Filter "coverage.cobertura.xml" | Select-Object -ExpandProperty FullName
-          Copy-Item $coveragePath ${{ github.workspace }}\coverage.cobertura.xml
-      - name: Build and analyze
+          if (!(Test-Path -Path "${{ runner.temp }}\coverage.opencover.xml")) {
+            Write-Host "Coverage file not found!"
+            exit 1
+          } else {
+            Write-Host "Coverage file successfully generated at ${{ runner.temp }}\coverage.opencover.xml"
+          }
+          
+      - name: Build and analyze with SonarQube
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"Braylin20_SistemaLlavesWebAPI" /o:"braylin20" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="${{ github.workspace }}\coverage.cobertura.xml"
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"Braylin20_SistemaLlavesWebAPI" /o:"braylin20" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths=${{ runner.temp }}/coverage.opencover.xml
           dotnet build ./SistemaLlavesWebAPI/SistemaLlavesWebAPI.sln
-          dotnet test ./TestServices/TestServices.csproj --collect:"XPlat Code Coverage"
-          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"   

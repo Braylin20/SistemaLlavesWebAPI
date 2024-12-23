@@ -11,7 +11,7 @@ namespace SistemaLlavesWebAPI.Services;
 [ExcludeFromCodeCoverage]
 public class ProductServices(Context _context) : IProductService
 {
-    
+
     public async Task<List<Productos>> GetAsync()
     {
         return await _context.Productos.ToListAsync();
@@ -21,23 +21,30 @@ public class ProductServices(Context _context) : IProductService
         _context.Productos.Add(producto);
         return await _context.SaveChangesAsync() > 0;
     }
-    public async Task<Productos> PutAsync(Productos producto)
+    public async Task<bool> PutAsync(Productos producto)
     {
-        var result = _context.Productos.Update(producto);
-        await _context.SaveChangesAsync();
-        return result.Entity;
+        var existingEntity = await _context.Productos.FindAsync(producto.ProductoId);
+        if (existingEntity is null) return false;
 
+        _context.Entry(existingEntity).State = EntityState.Detached; 
+
+        _context.Update(producto);
+        return await _context.SaveChangesAsync() > 0;
     }
-    public async Task<Productos> DeleteAsync(int id)
+    public async Task<Productos?> DeleteAsync(int id)
     {
-        var producto = await _context.Productos.FindAsync(id) ??
-            throw new KeyNotFoundException("The product was not found");
-
-        _context.Remove(producto);
-        await _context.SaveChangesAsync();
+        var producto = await _context.Productos.FindAsync(id);
+        if (producto != null)
+        {
+            _context.Remove(producto);
+            await _context.SaveChangesAsync();
+        }
 
         return producto;
     }
 
-
+    public async Task<Productos?> GetById(int id)
+    {
+        return await _context.Productos.FindAsync(id);
+    }
 }

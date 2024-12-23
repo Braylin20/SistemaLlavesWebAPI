@@ -2,22 +2,17 @@
 using Shared.Models;
 using SistemaLlavesWebAPI.Dal;
 using SistemaLlavesWebAPI.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using Xunit;
 
 namespace TestServices.Services
 {
-    [TestClass]
-    public class TestWarrantyService
+    public class TestWarrantyService : IDisposable
     {
-        private Context _context;
-        private WarrantyService _service;
+        private readonly Context _context;
+        private readonly WarrantyService _service;
 
-        [TestInitialize]
-        public void Setup()
+        public TestWarrantyService()
         {
             var options = new DbContextOptionsBuilder<Context>()
                 .UseInMemoryDatabase("TestWarrantyDatabase")
@@ -27,14 +22,14 @@ namespace TestServices.Services
             _service = new WarrantyService(_context);
         }
 
-        [TestCleanup]
-        public void Cleanup()
+        public void Dispose()
         {
             _context.Database.EnsureDeleted();
             _context.Dispose();
+            GC.SuppressFinalize(this);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task GetAsync_ShouldReturnAllWarranties()
         {
             // Arrange
@@ -46,10 +41,10 @@ namespace TestServices.Services
             var result = await _service.GetAsync();
 
             // Assert
-            Assert.AreEqual(2, result.Count);
+            Assert.Equal(2, result.Count);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task AddAsync_ShouldAddWarranty()
         {
             // Arrange
@@ -59,11 +54,11 @@ namespace TestServices.Services
             var result = await _service.AddAsync(warranty);
 
             // Assert
-            Assert.IsTrue(result);
-            Assert.AreEqual(1, await _context.Garantias.CountAsync());
+            Assert.True(result);
+            Assert.Equal(1, await _context.Garantias.CountAsync());
         }
 
-        [TestMethod]
+        [Fact]
         public async Task DeleteAsync_ShouldRemoveWarranty()
         {
             // Arrange
@@ -75,11 +70,11 @@ namespace TestServices.Services
             var result = await _service.DeleteAsync(1);
 
             // Assert
-            Assert.AreEqual(0, await _context.Garantias.CountAsync());
-            Assert.AreEqual(warranty, result);
+            Assert.Equal(0, await _context.Garantias.CountAsync());
+            Assert.Equal(warranty, result);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task PutAsync_ShouldUpdateWarranty()
         {
             // Arrange
@@ -94,19 +89,18 @@ namespace TestServices.Services
 
             // Assert
             var dbWarranty = await _context.Garantias.FindAsync(1);
-            Assert.IsNotNull(dbWarranty);
-            Assert.AreEqual(updatedWarranty.Descripcion, dbWarranty.Descripcion);
+            Assert.NotNull(dbWarranty);
+            Assert.Equal(updatedWarranty.Descripcion, dbWarranty.Descripcion);
         }
 
-
-        [TestMethod]
+        [Fact]
         public async Task DeleteAsync_ShouldThrowKeyNotFoundException_WhenWarrantyNotFound()
         {
             // Arrange
             int invalidId = 999; // ID que no existe
 
             // Act & Assert
-            await Assert.ThrowsExceptionAsync<KeyNotFoundException>(async () =>
+            await Assert.ThrowsAsync<KeyNotFoundException>(async () =>
             {
                 await _service.DeleteAsync(invalidId);
             });

@@ -2,26 +2,21 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Moq;
 using SistemaLlavesWebAPI.Services;
 using Xunit;
 using SistemaLlavesWebAPI.Dal;
 using Shared.Models;
-using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
-
-
 
 namespace TestServices.Services
 {
-    [TestClass]
-    public class PurchaseServiceTests
+    public class PurchaseServiceTests : IDisposable
     {
-        private Context _context;
-        private PurchaseService _service;
+        private readonly Context _context;
+        private readonly PurchaseService _service;
 
-        [TestInitialize]
-        public void Setup()
+        public PurchaseServiceTests()
         {
+            // Configuración inicial
             var options = new DbContextOptionsBuilder<Context>()
                 .UseInMemoryDatabase("TestDatabase")
                 .Options;
@@ -30,14 +25,15 @@ namespace TestServices.Services
             _service = new PurchaseService(_context);
         }
 
-        [TestCleanup]
-        public void Cleanup()
+        public void Dispose()
         {
+            // Limpieza al final de cada prueba
             _context.Database.EnsureDeleted();
             _context.Dispose();
+            GC.SuppressFinalize(this);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task AddAsync_ShouldAddPurchase()
         {
             // Arrange
@@ -47,11 +43,11 @@ namespace TestServices.Services
             var result = await _service.AddAsync(purchase);
 
             // Assert
-            Assert.IsTrue(result);
-            Assert.AreEqual(1, await _context.Compras.CountAsync());
+            Assert.True(result);
+            Assert.Equal(1, await _context.Compras.CountAsync());
         }
 
-        [TestMethod]
+        [Fact]
         public async Task GetAsync_ShouldReturnAllPurchases()
         {
             // Arrange
@@ -63,10 +59,10 @@ namespace TestServices.Services
             var result = await _service.GetAsync();
 
             // Assert
-            Assert.AreEqual(2, result.Count);
+            Assert.Equal(2, result.Count);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task DeleteAsync_ShouldRemovePurchase()
         {
             // Arrange
@@ -78,12 +74,11 @@ namespace TestServices.Services
             var result = await _service.DeleteAsync(1);
 
             // Assert
-            Assert.AreEqual(0, await _context.Compras.CountAsync());
-            Assert.AreEqual(purchase, result);
+            Assert.Equal(0, await _context.Compras.CountAsync());
+            Assert.Equal(purchase, result);
         }
 
-        [TestMethod]
-
+        [Fact]
         public async Task PutAsync_ShouldUpdatePurchase()
         {
             // Arrange
@@ -98,8 +93,8 @@ namespace TestServices.Services
 
             // Assert
             var dbPurchase = await _context.Compras.FindAsync(1);
-            Assert.IsNotNull(dbPurchase);
-            Assert.AreEqual(updatedPurchase.Fecha, dbPurchase.Fecha);
+            Assert.NotNull(dbPurchase);
+            Assert.Equal(updatedPurchase.Fecha, dbPurchase.Fecha);
         }
     }
 }

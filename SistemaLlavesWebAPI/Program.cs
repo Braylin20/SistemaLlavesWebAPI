@@ -2,6 +2,8 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using SistemaLlavesWebAPI.Dal;
+using SistemaLlavesWebAPI.Interfaces;
+using SistemaLlavesWebAPI.Services;
 
 namespace SistemaLlavesWebAPI
 {
@@ -18,6 +20,8 @@ namespace SistemaLlavesWebAPI
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddScoped<IProductService, ProductServices>();
 
             var ConStr = 
                 builder.Configuration.GetConnectionString("ConStr");
