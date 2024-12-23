@@ -74,7 +74,7 @@ public class ClientesController(IClientService clientService) : ControllerBase
         try
         {
             var deletedCliente = await clientService.DeleteAsync(id);
-            return Ok(deletedCliente); // Return the deleted entity or NoContent() as required.
+            return Ok(deletedCliente); 
         }
         catch (KeyNotFoundException ex)
         {
