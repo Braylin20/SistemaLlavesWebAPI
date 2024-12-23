@@ -1,28 +1,50 @@
-﻿using Shared.Models;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
+using Shared.Models;
+using SistemaLlavesWebAPI.Dal;
 using SistemaLlavesWebAPI.Interfaces;
+using System.Diagnostics.CodeAnalysis;
 
-namespace SistemaLlavesWebAPI.Services
+
+namespace SistemaLlavesWebAPI.Services;
+
+[ExcludeFromCodeCoverage]
+public class ProductServices(Context _context) : IProductService
 {
-    public class ProductServices : IProductService
+
+    public async Task<List<Productos>> GetAsync()
     {
-        public Task<Productos> AddAsync()
+        return await _context.Productos.ToListAsync();
+    }
+    public async Task<bool> AddAsync(Productos producto)
+    {
+        _context.Productos.Add(producto);
+        return await _context.SaveChangesAsync() > 0;
+    }
+    public async Task<bool> PutAsync(Productos producto)
+    {
+        var existingEntity = await _context.Productos.FindAsync(producto.ProductoId);
+        if (existingEntity is null) return false;
+
+        _context.Entry(existingEntity).State = EntityState.Detached; 
+
+        _context.Update(producto);
+        return await _context.SaveChangesAsync() > 0;
+    }
+    public async Task<Productos?> DeleteAsync(int id)
+    {
+        var producto = await _context.Productos.FindAsync(id);
+        if (producto != null)
         {
-            throw new NotImplementedException();
+            _context.Remove(producto);
+            await _context.SaveChangesAsync();
         }
 
-        public Task<Productos> DeleteAsync()
-        {
-            throw new NotImplementedException();
-        }
+        return producto;
+    }
 
-        public Task<List<Productos>> GetAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Productos> PutAsync()
-        {
-            throw new NotImplementedException();
-        }
+    public async Task<Productos?> GetById(int id)
+    {
+        return await _context.Productos.FindAsync(id);
     }
 }
