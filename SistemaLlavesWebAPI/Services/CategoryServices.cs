@@ -6,7 +6,6 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace SistemaLlavesWebAPI.Services
 {
-    [ExcludeFromCodeCoverage]
     public class CategoryServices: ICategoryService
     {
         private readonly Context _context;
