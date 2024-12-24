@@ -13,7 +13,6 @@ namespace SistemaLlavesWebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [ExcludeFromCodeCoverage]
     public class ProductosController : ControllerBase
     {
         private readonly IProductService productService;
