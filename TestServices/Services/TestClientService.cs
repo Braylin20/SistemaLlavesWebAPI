@@ -120,4 +120,14 @@ public class TestClientService : IDisposable
         // Act & Assert
         await Assert.ThrowsAsync<KeyNotFoundException>(() => _service.GetByIdAsync(99));
     }
+    
+    [Fact]
+    public async Task PutAsync_ShouldThrowException_WhenClientNotFound()
+    {
+        // Arrange
+        var nonExistentClient = new Clientes { ClienteId = 99, Nombre = "Non-Existent Client" };
+
+        // Act & Assert
+        await Assert.ThrowsAsync<KeyNotFoundException>(() => _service.PutAsync(nonExistentClient));
+    }
 }
