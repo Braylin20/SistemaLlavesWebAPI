@@ -89,7 +89,7 @@ namespace TestServices.Services
             var result = await _service.DeleteAsync(1);
 
             // Assert
-            Assert.Equal(metodoPago.TipoMetodoPago, result.TipoMetodoPago);
+            Assert.Equal(metodoPago.TipoMetodoPago, result?.TipoMetodoPago);
             Assert.Equal(0, await _context.Productos.CountAsync());
         }
     }
