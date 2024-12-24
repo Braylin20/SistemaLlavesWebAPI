@@ -8,7 +8,6 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace SistemaLlavesWebAPI.Services;
 
-[ExcludeFromCodeCoverage]
 public class ProductServices(Context _context) : IProductService
 {
 
@@ -31,16 +30,14 @@ public class ProductServices(Context _context) : IProductService
         _context.Update(producto);
         return await _context.SaveChangesAsync() > 0;
     }
-    public async Task<Productos?> DeleteAsync(int id)
+    public async Task<bool> DeleteAsync(int id)
     {
         var producto = await _context.Productos.FindAsync(id);
-        if (producto != null)
-        {
-            _context.Remove(producto);
-            await _context.SaveChangesAsync();
-        }
-
-        return producto;
+        if (producto is null)
+            return false;
+        
+        _context.Remove(producto);
+        return await _context.SaveChangesAsync() > 0;
     }
 
     public async Task<Productos?> GetById(int id)

@@ -59,6 +59,7 @@ namespace TestPrueba.Services
         public async Task PutAsync_ShouldUpdateProduct()
         {
             // Arrange
+            
             var producto = new Productos { ProductoId = 1, Descripcion = "Producto Original" };
             _context.Productos.Add(producto);
             await _context.SaveChangesAsync();
@@ -67,14 +68,31 @@ namespace TestPrueba.Services
 
             // Act
             var result = await _service.PutAsync(updatedProduct);
+            
 
             // Assert
-           
+
+
+            
             Assert.True(result);
 
             var productoEnBaseDeDatos = await _context.Productos.FindAsync(1);
+
+
             Assert.NotNull(productoEnBaseDeDatos);
             Assert.Equal("Producto Actualizado", productoEnBaseDeDatos.Descripcion);
+
+        }
+
+        [Fact]
+        public async Task PutAsync_ShouldReturnFalseWhenProductIsNull()
+        {
+            var nonExistProduct = new Productos { ProductoId = 10, Descripcion = "Producto Original" };
+
+
+            var resultNonExistProuct = await _service.PutAsync(nonExistProduct);
+
+            Assert.False(resultNonExistProuct);
         }
 
         [Fact]
@@ -89,8 +107,31 @@ namespace TestPrueba.Services
             var result = await _service.DeleteAsync(1);
 
             // Assert
-            Assert.Equal(producto.Descripcion, result.Descripcion);
+            Assert.True(result);
             Assert.Equal(0, await _context.Productos.CountAsync());
+        }
+
+        [Fact]
+        public async Task DeleteAsync_ShouldReturnFalseWhenProductIsNull()
+        {
+            var nonExistProduct = new Productos { ProductoId = 10, Descripcion = "Producto Original" };
+
+
+            var resultNonExistProuct = await _service.DeleteAsync(nonExistProduct.ProductoId);
+
+            Assert.False(resultNonExistProuct);
+        }
+        [Fact]
+        public async Task GetbyId_ShouldReturnProductById()
+        {
+            Productos producto = new Productos { ProductoId = 1, Descripcion = "Producto 2" };
+            _context.Productos.Add(producto);
+            await _context.SaveChangesAsync();
+
+
+            var result = await _service.GetById(producto.ProductoId);
+
+            Assert.Equal(result, producto);
         }
 
     }

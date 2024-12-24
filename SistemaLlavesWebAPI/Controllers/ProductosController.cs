@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Models;
-using SistemaLlavesWebAPI.Dal;
 using SistemaLlavesWebAPI.Interfaces;
 
 namespace SistemaLlavesWebAPI.Controllers
@@ -77,7 +71,7 @@ namespace SistemaLlavesWebAPI.Controllers
         {
             var product = await productService.DeleteAsync(id);
 
-            if (product is null) return NotFound(id);
+            if (!product) return NotFound(id);
 
             return Ok(product);
         }

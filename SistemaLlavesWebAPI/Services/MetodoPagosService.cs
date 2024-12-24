@@ -18,21 +18,29 @@ namespace SistemaLlavesWebAPI.Services
             _context.MetodosPagos.Add(metodosPago);
             return await _context.SaveChangesAsync() > 0;
         }
-        public async Task<MetodosPagos> PutAsync(MetodosPagos metodosPago)
+        public async Task<bool> PutAsync(MetodosPagos metodosPago)
         {
-            var result = _context.MetodosPagos.Update(metodosPago);
-            await _context.SaveChangesAsync();
-            return result.Entity;
+            var existingEntity = await _context.MetodosPagos.FindAsync(metodosPago.MetodoPagoId);
+            if (existingEntity is null) return false;
+
+            _context.Entry(existingEntity).State = EntityState.Detached;
+
+            _context.Update(metodosPago);
+            return await _context.SaveChangesAsync() > 0;
         }
-        public async Task<MetodosPagos> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
-            var metodoPago = await _context.MetodosPagos.FindAsync(id) ??
-           throw new KeyNotFoundException("The product was not found");
+            var metodoPago = await _context.MetodosPagos.FindAsync(id);
+            if (metodoPago is null)
+                return false;
 
             _context.Remove(metodoPago);
-            await _context.SaveChangesAsync();
+            return await _context.SaveChangesAsync() > 0;
+        }
 
-            return metodoPago;
+        public async Task<MetodosPagos?> GetById(int id)
+        {
+            return await _context.MetodosPagos.FindAsync(id);
         }
     }
 }

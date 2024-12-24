@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Shared.Models;
 using SistemaLlavesWebAPI.Dal;
+using SistemaLlavesWebAPI.Interfaces;
+using SistemaLlavesWebAPI.Services;
 
 namespace SistemaLlavesWebAPI.Controllers
 {
@@ -16,25 +18,25 @@ namespace SistemaLlavesWebAPI.Controllers
     [ExcludeFromCodeCoverage]
     public class MetodosPagosController : ControllerBase
     {
-        private readonly Context _context;
+        private readonly IMetodoPagosService _metodoPagoService;
 
-        public MetodosPagosController(Context context)
+        public MetodosPagosController(IMetodoPagosService metodoPagosService)
         {
-            _context = context;
+            _metodoPagoService = metodoPagosService;
         }
 
         // GET: api/MetodosPagos
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MetodosPagos>>> GetMetodosPagos()
         {
-            return await _context.MetodosPagos.ToListAsync();
+            return await _metodoPagoService.GetAsync();
         }
 
         // GET: api/MetodosPagos/5
         [HttpGet("{id}")]
         public async Task<ActionResult<MetodosPagos>> GetMetodosPagos(int id)
         {
-            var metodosPagos = await _context.MetodosPagos.FindAsync(id);
+            var metodosPagos = await _metodoPagoService.GetById(id);
 
             if (metodosPagos == null)
             {
@@ -47,32 +49,22 @@ namespace SistemaLlavesWebAPI.Controllers
         // PUT: api/MetodosPagos/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutMetodosPagos(int id, MetodosPagos metodosPagos)
+        public async Task<IActionResult> PutMetodosPagos(int id, MetodosPagos metodosPago)
         {
-            if (id != metodosPagos.MetodoPagoId)
+            if (id != metodosPago.MetodoPagoId)
+                return BadRequest();
+
+            try
+            {
+                await _metodoPagoService.PutAsync(metodosPago);
+                return Ok();
+            }
+            catch (DbUpdateConcurrencyException)
             {
                 return BadRequest();
             }
 
-            _context.Entry(metodosPagos).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!MetodosPagosExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            
         }
 
         // POST: api/MetodosPagos
@@ -80,8 +72,8 @@ namespace SistemaLlavesWebAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<MetodosPagos>> PostMetodosPagos(MetodosPagos metodosPagos)
         {
-            _context.MetodosPagos.Add(metodosPagos);
-            await _context.SaveChangesAsync();
+            if(!await _metodoPagoService.AddAsync(metodosPagos))
+                return BadRequest();
 
             return CreatedAtAction("GetMetodosPagos", new { id = metodosPagos.MetodoPagoId }, metodosPagos);
         }
@@ -90,21 +82,11 @@ namespace SistemaLlavesWebAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMetodosPagos(int id)
         {
-            var metodosPagos = await _context.MetodosPagos.FindAsync(id);
-            if (metodosPagos == null)
-            {
-                return NotFound();
-            }
+            var metodoPago = await _metodoPagoService.DeleteAsync(id);
+            if(!metodoPago) 
+                return NotFound(id);
 
-            _context.MetodosPagos.Remove(metodosPagos);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool MetodosPagosExists(int id)
-        {
-            return _context.MetodosPagos.Any(e => e.MetodoPagoId == id);
+            return Ok(metodoPago);
         }
     }
 }
