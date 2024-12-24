@@ -1,110 +1,82 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
 using Shared.Models;
-using SistemaLlavesWebAPI.Dal;
+using SistemaLlavesWebAPI.Interfaces;
 
-namespace SistemaLlavesWebAPI.Controllers
+namespace SistemaLlavesWebAPI.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class ProveedoresController(IProviderService providerService) : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    [ExcludeFromCodeCoverage]
-    public class ProveedoresController : ControllerBase
+    // GET: api/Proveedores
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<Proveedores>>> GetProveedores()
     {
-        private readonly Context _context;
+        return await providerService.GetAsync();
+    }
 
-        public ProveedoresController(Context context)
+    // GET: api/Proveedores/5
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Proveedores>> GetProveedores(int id)
+    {
+        try
         {
-            _context = context;
+            return await providerService.GetByIdAsync(id);
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+    }
+
+    // POST: api/Proveedores
+    [HttpPost]
+    public async Task<ActionResult<Proveedores>> PostProveedores(Proveedores proveedores)
+    {
+        if (!await providerService.AddAsync(proveedores))
+        {
+            return BadRequest();
         }
 
-        // GET: api/Proveedores
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Proveedores>>> GetProveedores()
+        return CreatedAtAction("GetProveedores", new { id = proveedores.ProovedorId }, proveedores);
+    }
+
+    // PUT: api/Proveedores/5
+    [HttpPut("{id}")]
+    public async Task<IActionResult> PutProveedores(int id, Proveedores proveedores)
+    {
+        if (id != proveedores.ProovedorId)
         {
-            return await _context.Proveedores.ToListAsync();
+            return BadRequest();
         }
 
-        // GET: api/Proveedores/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Proveedores>> GetProveedores(int id)
+        try
         {
-            var proveedores = await _context.Proveedores.FindAsync(id);
-
-            if (proveedores == null)
-            {
-                return NotFound();
-            }
-
-            return proveedores;
+            var updatedProvider = await providerService.PutAsync(proveedores);
+            return Ok(updatedProvider);
         }
-
-        // PUT: api/Proveedores/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutProveedores(int id, Proveedores proveedores)
+        catch (KeyNotFoundException)
         {
-            if (id != proveedores.ProovedorId)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(proveedores).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ProveedoresExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return NotFound();
         }
-
-        // POST: api/Proveedores
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Proveedores>> PostProveedores(Proveedores proveedores)
+        catch (Exception ex)
         {
-            _context.Proveedores.Add(proveedores);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetProveedores", new { id = proveedores.ProovedorId }, proveedores);
+            return BadRequest(ex.Message);
         }
+    }
 
-        // DELETE: api/Proveedores/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProveedores(int id)
+    // DELETE: api/Proveedores/5
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteProveedores(int id)
+    {
+        try
         {
-            var proveedores = await _context.Proveedores.FindAsync(id);
-            if (proveedores == null)
-            {
-                return NotFound();
-            }
-
-            _context.Proveedores.Remove(proveedores);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            var deletedProveedor = await providerService.DeleteAsync(id);
+            return Ok(deletedProveedor); 
         }
-
-        private bool ProveedoresExists(int id)
+        catch (KeyNotFoundException ex)
         {
-            return _context.Proveedores.Any(e => e.ProovedorId == id);
+            return NotFound(new { message = ex.Message });
         }
     }
 }

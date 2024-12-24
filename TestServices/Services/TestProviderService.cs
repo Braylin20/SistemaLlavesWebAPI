@@ -120,4 +120,14 @@ public class TestProviderService : IDisposable
         // Act & Assert
         await Assert.ThrowsAsync<KeyNotFoundException>(() => _service.GetByIdAsync(99));
     }
+    
+    [Fact]
+    public async Task PutAsync_ShouldThrowException_WhenProviderNotFound()
+    {
+        // Arrange
+        var nonExistentProvider = new Proveedores { ProovedorId = 99, Nombre = "Non-Existent Provider" };
+
+        // Act & Assert
+        await Assert.ThrowsAsync<KeyNotFoundException>(() => _service.PutAsync(nonExistentProvider));
+    }
 }

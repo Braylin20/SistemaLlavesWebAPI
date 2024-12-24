@@ -1,110 +1,82 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
 using Shared.Models;
-using SistemaLlavesWebAPI.Dal;
+using SistemaLlavesWebAPI.Interfaces;
 
-namespace SistemaLlavesWebAPI.Controllers
+namespace SistemaLlavesWebAPI.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class ClientesController(IClientService clientService) : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    [ExcludeFromCodeCoverage]
-    public class ClientesController : ControllerBase
+    // GET: api/Clientes
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<Clientes>>> GetClientes()
     {
-        private readonly Context _context;
+        return await clientService.GetAsync();
+    }
 
-        public ClientesController(Context context)
+    // GET: api/Clientes/5
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Clientes>> GetClientes(int id)
+    {
+        try
         {
-            _context = context;
+            return await clientService.GetByIdAsync(id);
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+    }
+
+    // POST: api/Clientes
+    [HttpPost]
+    public async Task<ActionResult<Clientes>> PostClientes(Clientes clientes)
+    {
+        if (!await clientService.AddAsync(clientes))
+        {
+            return BadRequest();
         }
 
-        // GET: api/Clientes
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Clientes>>> GetClientes()
+        return CreatedAtAction("GetClientes", new { id = clientes.ClienteId }, clientes);
+    }
+
+    // PUT: api/Clientes/5
+    [HttpPut("{id}")]
+    public async Task<IActionResult> PutClientes(int id, Clientes clientes)
+    {
+        if (id != clientes.ClienteId)
         {
-            return await _context.Clientes.ToListAsync();
+            return BadRequest();
         }
 
-        // GET: api/Clientes/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Clientes>> GetClientes(int id)
+        try
         {
-            var clientes = await _context.Clientes.FindAsync(id);
-
-            if (clientes == null)
-            {
-                return NotFound();
-            }
-
-            return clientes;
+            var updatedClient = await clientService.PutAsync(clientes);
+            return Ok(updatedClient);
         }
-
-        // PUT: api/Clientes/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutClientes(int id, Clientes clientes)
+        catch (KeyNotFoundException)
         {
-            if (id != clientes.ClienteId)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(clientes).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ClientesExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return NotFound();
         }
-
-        // POST: api/Clientes
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Clientes>> PostClientes(Clientes clientes)
+        catch (Exception ex)
         {
-            _context.Clientes.Add(clientes);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetClientes", new { id = clientes.ClienteId }, clientes);
+            return BadRequest(ex.Message);
         }
+    }
 
-        // DELETE: api/Clientes/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteClientes(int id)
+    // DELETE: api/Clientes/5
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteClientes(int id)
+    {
+        try
         {
-            var clientes = await _context.Clientes.FindAsync(id);
-            if (clientes == null)
-            {
-                return NotFound();
-            }
-
-            _context.Clientes.Remove(clientes);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            var deletedCliente = await clientService.DeleteAsync(id);
+            return Ok(deletedCliente); 
         }
-
-        private bool ClientesExists(int id)
+        catch (KeyNotFoundException ex)
         {
-            return _context.Clientes.Any(e => e.ClienteId == id);
+            return NotFound(new { message = ex.Message });
         }
     }
 }
