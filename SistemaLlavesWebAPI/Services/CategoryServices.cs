@@ -6,7 +6,6 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace SistemaLlavesWebAPI.Services
 {
-    [ExcludeFromCodeCoverage]
     public class CategoryServices: ICategoryService
     {
         private readonly Context _context;
@@ -51,7 +50,7 @@ namespace SistemaLlavesWebAPI.Services
 
         public async Task<bool> DeleteAsync(int categoriaId)
         {
-            var categoria = await _context.Categorias.FindAsync(categoriaId);
+            var categoria = await _context.Categorias.FirstOrDefaultAsync(c => c.CategoriaId == categoriaId);
             if (categoria == null)
             {
                 return false;
