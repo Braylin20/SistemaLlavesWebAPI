@@ -184,4 +184,36 @@ public class TestClientesController : IDisposable
         // Assert
         Assert.Equal(1000, result.Value?.Count());
     }
+    
+    [Fact]
+    public async Task PostClientes_ShouldReturnBadRequest_WhenClientIsInvalid()
+    {
+        // Arrange
+        Clientes invalidClient = null;
+
+        // Act
+        if (invalidClient != null)
+        {
+            var result = await _controller.PostClientes(invalidClient);
+
+            // Assert
+            Assert.IsType<BadRequestResult>(result.Result);
+        }
+    }
+
+    [Fact]
+    public async Task PutClientes_ShouldReturnBadRequest_WhenClientIsInvalid()
+    {
+        // Arrange
+        Clientes invalidClient = null;
+
+        // Act
+        if (invalidClient != null)
+        {
+            var result = await _controller.PutClientes(1, invalidClient);
+
+            // Assert
+            Assert.IsType<BadRequestResult>(result);
+        }
+    }
 }

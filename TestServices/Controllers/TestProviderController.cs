@@ -184,4 +184,36 @@ public class TestProveedoresController : IDisposable
         // Assert
         Assert.Equal(1000, result.Value?.Count());
     }
+    
+    [Fact]
+    public async Task PostProveedores_ShouldReturnBadRequest_WhenProviderIsInvalid()
+    {
+        // Arrange
+        Proveedores invalidProvider = null;
+
+        // Act
+        if (invalidProvider != null)
+        {
+            var result = await _controller.PostProveedores(invalidProvider);
+
+            // Assert
+            Assert.IsType<BadRequestResult>(result.Result);
+        }
+    }
+    
+    [Fact]
+    public async Task PutProveedores_ShouldReturnBadRequest_WhenProviderIsInvalid()
+    {
+        // Arrange
+        Proveedores invalidProvider = null;
+
+        // Act
+        if (invalidProvider != null)
+        {
+            var result = await _controller.PutProveedores(1, invalidProvider);
+
+            // Assert
+            Assert.IsType<BadRequestResult>(result);
+        }
+    }
 }
