@@ -38,12 +38,25 @@ namespace TestServices.Controller
             var okResult = Assert.IsType<ActionResult<IEnumerable<MetodosPagos>>>(result);
             Assert.Equal(metodoPagosList, okResult.Value);
         }
+        [Fact]
+        public async Task GetMetodoPagoById_ShouldReturnNotFoundWhenIdDoesNotExist()
+        {
+            var metodoPago = new MetodosPagos() { MetodoPagoId = 1, TipoMetodoPago = "Metodo 1"};
+
+
+            _metodoPagosService.Setup(s => s.GetById(metodoPago.MetodoPagoId)).ReturnsAsync(metodoPago);
+
+            var result = await _controller.GetMetodosPagos(2);
+
+            Assert.IsType<NotFoundResult>(result.Result);
+
+        }
 
         [Fact]
         public async Task GetMetodoPago_ShouldReturnProductById()
         {
-            var metodoPago = new MetodosPagos() { MetodoPagoId = 1, TipoMetodoPago = "Metodo 1"};
 
+            var metodoPago = new MetodosPagos() { MetodoPagoId = 1, TipoMetodoPago = "Metodo 1" };
 
             _metodoPagosService.Setup(s => s.GetById(metodoPago.MetodoPagoId)).ReturnsAsync(metodoPago);
 
