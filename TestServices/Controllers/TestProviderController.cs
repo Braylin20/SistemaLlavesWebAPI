@@ -1,48 +1,53 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Moq;
 using Shared.Models;
 using SistemaLlavesWebAPI.Controllers;
-using SistemaLlavesWebAPI.Dal;
-using SistemaLlavesWebAPI.Services;
+using SistemaLlavesWebAPI.Interfaces;
 
 namespace TestServices.Controllers;
 
-public class TestProveedoresController : IDisposable
+public class TestProveedoresController
 {
-    private readonly Context _context;
+    private readonly Mock<IProviderService> _providerServiceMock;
     private readonly ProveedoresController _controller;
 
     public TestProveedoresController()
     {
-        var options = new DbContextOptionsBuilder<Context>()
-            .UseInMemoryDatabase("TestProviderControllerDatabase")
-            .Options;
-        _context = new Context(options);
-
-        var providerService = new ProviderService(_context);
-        _controller = new ProveedoresController(providerService);
-    }
-
-    public void Dispose()
-    {
-        _context.Database.EnsureDeleted();
-        _context.Dispose();
-        GC.SuppressFinalize(this);
+        _providerServiceMock = new Mock<IProviderService>();
+        _controller = new ProveedoresController(_providerServiceMock.Object);
     }
 
     [Fact]
     public async Task GetProveedores_ShouldReturnAllProviders()
     {
         // Arrange
-        _context.Proveedores.Add(new Proveedores { ProovedorId = 1, Nombre = "Proveedor 1" });
-        _context.Proveedores.Add(new Proveedores { ProovedorId = 2, Nombre = "Proveedor 2" });
-        await _context.SaveChangesAsync();
+        var providers = new List<Proveedores>
+        {
+            new Proveedores { ProovedorId = 1, Nombre = "Proveedor 1" },
+            new Proveedores { ProovedorId = 2, Nombre = "Proveedor 2" }
+        };
+        _providerServiceMock.Setup(s => s.GetAsync()).ReturnsAsync(providers);
 
         // Act
         var result = await _controller.GetProveedores();
 
         // Assert
-        Assert.Equal(2, result.Value?.Count());
+        Assert.NotNull(result.Value);
+        Assert.Equal(2, result.Value.Count());
+    }
+
+    [Fact]
+    public async Task GetProveedores_ShouldReturnEmptyList_WhenNoProvidersExist()
+    {
+        // Arrange
+        _providerServiceMock.Setup(s => s.GetAsync()).ReturnsAsync(new List<Proveedores>());
+
+        // Act
+        var result = await _controller.GetProveedores();
+
+        // Assert
+        Assert.NotNull(result.Value);
+        Assert.Empty(result.Value);
     }
 
     [Fact]
@@ -50,8 +55,7 @@ public class TestProveedoresController : IDisposable
     {
         // Arrange
         var provider = new Proveedores { ProovedorId = 1, Nombre = "Proveedor Existente" };
-        _context.Proveedores.Add(provider);
-        await _context.SaveChangesAsync();
+        _providerServiceMock.Setup(s => s.GetByIdAsync(1)).ReturnsAsync(provider);
 
         // Act
         var result = await _controller.GetProveedores(1);
@@ -64,6 +68,9 @@ public class TestProveedoresController : IDisposable
     [Fact]
     public async Task GetProveedoresById_ShouldReturnNotFound_WhenProviderDoesNotExist()
     {
+        // Arrange
+        _providerServiceMock.Setup(s => s.GetByIdAsync(It.IsAny<int>())).ThrowsAsync(new KeyNotFoundException());
+
         // Act
         var result = await _controller.GetProveedores(99);
 
@@ -76,74 +83,59 @@ public class TestProveedoresController : IDisposable
     {
         // Arrange
         var provider = new Proveedores { ProovedorId = 1, Nombre = "Nuevo Proveedor" };
+        _providerServiceMock.Setup(s => s.AddAsync(It.IsAny<Proveedores>())).ReturnsAsync(true);
 
         // Act
         var result = await _controller.PostProveedores(provider);
 
         // Assert
         Assert.IsType<CreatedAtActionResult>(result.Result);
-        Assert.Equal(1, await _context.Proveedores.CountAsync());
+        _providerServiceMock.Verify(s => s.AddAsync(It.IsAny<Proveedores>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task PostProveedores_ShouldReturnBadRequest_WhenAddAsyncFails()
+    {
+        // Arrange
+        var provider = new Proveedores { ProovedorId = 1, Nombre = "Test Provider" };
+        _providerServiceMock.Setup(s => s.AddAsync(It.IsAny<Proveedores>())).ReturnsAsync(false);
+
+        // Act
+        var result = await _controller.PostProveedores(provider);
+
+        // Assert
+        Assert.IsType<BadRequestResult>(result.Result);
     }
 
     [Fact]
     public async Task PutProveedores_ShouldUpdateProvider()
     {
         // Arrange
-        var provider = new Proveedores { ProovedorId = 1, Nombre = "Proveedor Original" };
-        _context.Proveedores.Add(provider);
-        await _context.SaveChangesAsync();
-
-        var updatedProvider = new Proveedores { ProovedorId = 1, Nombre = "Proveedor Actualizado" };
+        var provider = new Proveedores { ProovedorId = 1, Nombre = "Proveedor Actualizado" };
+        _providerServiceMock.Setup(s => s.PutAsync(It.IsAny<Proveedores>())).ReturnsAsync(provider);
 
         // Act
-        var result = await _controller.PutProveedores(1, updatedProvider);
+        var result = await _controller.PutProveedores(1, provider);
 
         // Assert
         Assert.IsType<OkObjectResult>(result);
-        var dbProvider = await _context.Proveedores.FindAsync(1);
-        Assert.NotNull(dbProvider);
-        Assert.Equal(updatedProvider.Nombre, dbProvider.Nombre);
+        _providerServiceMock.Verify(s => s.PutAsync(It.IsAny<Proveedores>()), Times.Once);
     }
 
     [Fact]
     public async Task PutProveedores_ShouldReturnNotFound_WhenProviderDoesNotExist()
     {
         // Arrange
-        var updatedProvider = new Proveedores { ProovedorId = 99, Nombre = "Non-Existent Provider" };
+        var provider = new Proveedores { ProovedorId = 99, Nombre = "Non-Existent Provider" };
+        _providerServiceMock.Setup(s => s.PutAsync(It.IsAny<Proveedores>())).ThrowsAsync(new KeyNotFoundException());
 
         // Act
-        var result = await _controller.PutProveedores(99, updatedProvider);
+        var result = await _controller.PutProveedores(99, provider);
 
         // Assert
         Assert.IsType<NotFoundResult>(result);
     }
 
-    [Fact]
-    public async Task DeleteProveedores_ShouldRemoveProvider()
-    {
-        // Arrange
-        var provider = new Proveedores { ProovedorId = 1, Nombre = "Proveedor a eliminar" };
-        _context.Proveedores.Add(provider);
-        await _context.SaveChangesAsync();
-
-        // Act
-        var result = await _controller.DeleteProveedores(1);
-
-        // Assert
-        Assert.IsType<OkObjectResult>(result);
-        Assert.Equal(0, await _context.Proveedores.CountAsync());
-    }
-
-    [Fact]
-    public async Task DeleteProveedores_ShouldReturnNotFound_WhenProviderDoesNotExist()
-    {
-        // Act
-        var result = await _controller.DeleteProveedores(99);
-
-        // Assert
-        Assert.IsType<NotFoundObjectResult>(result);
-    }
-    
     [Fact]
     public async Task PutProveedores_ShouldReturnBadRequest_WhenIdsMismatch()
     {
@@ -156,64 +148,46 @@ public class TestProveedoresController : IDisposable
         // Assert
         Assert.IsType<BadRequestResult>(result);
     }
-    
+
     [Fact]
-    public async Task GetProveedores_ShouldReturnEmptyList_WhenNoProvidersExist()
+    public async Task PutProveedores_ShouldReturnBadRequest_WhenExceptionOccurs()
     {
+        // Arrange
+        _providerServiceMock.Setup(s => s.PutAsync(It.IsAny<Proveedores>())).ThrowsAsync(new Exception("Test Exception"));
+        var provider = new Proveedores { ProovedorId = 1, Nombre = "Test Provider" };
+
         // Act
-        var result = await _controller.GetProveedores();
+        var result = await _controller.PutProveedores(1, provider);
 
         // Assert
-        Assert.NotNull(result.Value);
-        Assert.Empty(result.Value);
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+        Assert.Equal("Test Exception", badRequestResult.Value);
     }
-    
+
     [Fact]
-    public async Task GetProveedores_ShouldHandleLargeDataSet()
+    public async Task DeleteProveedores_ShouldRemoveProvider()
     {
         // Arrange
-        for (int i = 1; i <= 1000; i++)
-        {
-            _context.Proveedores.Add(new Proveedores { ProovedorId = i, Nombre = $"Proveedor {i}" });
-        }
-        await _context.SaveChangesAsync();
+        _providerServiceMock.Setup(s => s.DeleteAsync(1)).ReturnsAsync(new Proveedores { ProovedorId = 1 });
 
         // Act
-        var result = await _controller.GetProveedores();
+        var result = await _controller.DeleteProveedores(1);
 
         // Assert
-        Assert.Equal(1000, result.Value?.Count());
+        Assert.IsType<OkObjectResult>(result);
+        _providerServiceMock.Verify(s => s.DeleteAsync(1), Times.Once);
     }
-    
+
     [Fact]
-    public async Task PostProveedores_ShouldReturnBadRequest_WhenProviderIsInvalid()
+    public async Task DeleteProveedores_ShouldReturnNotFound_WhenProviderDoesNotExist()
     {
         // Arrange
-        Proveedores invalidProvider = null;
+        _providerServiceMock.Setup(s => s.DeleteAsync(It.IsAny<int>())).ThrowsAsync(new KeyNotFoundException());
 
         // Act
-        if (invalidProvider != null)
-        {
-            var result = await _controller.PostProveedores(invalidProvider);
+        var result = await _controller.DeleteProveedores(99);
 
-            // Assert
-            Assert.IsType<BadRequestResult>(result.Result);
-        }
-    }
-    
-    [Fact]
-    public async Task PutProveedores_ShouldReturnBadRequest_WhenProviderIsInvalid()
-    {
-        // Arrange
-        Proveedores invalidProvider = null;
-
-        // Act
-        if (invalidProvider != null)
-        {
-            var result = await _controller.PutProveedores(1, invalidProvider);
-
-            // Assert
-            Assert.IsType<BadRequestResult>(result);
-        }
+        // Assert
+        Assert.IsType<NotFoundObjectResult>(result);
     }
 }
