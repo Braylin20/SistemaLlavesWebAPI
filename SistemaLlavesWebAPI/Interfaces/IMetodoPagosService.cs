@@ -6,7 +6,8 @@ namespace SistemaLlavesWebAPI.Interfaces
     {
         public Task<List<MetodosPagos>> GetAsync();
         public Task<bool> AddAsync(MetodosPagos metodosPago);
-        public Task<MetodosPagos> PutAsync(MetodosPagos metodosPago);
-        public Task<MetodosPagos> DeleteAsync(int id);
+        public Task<bool> PutAsync(MetodosPagos metodosPago);
+        public Task<MetodosPagos?> DeleteAsync(int id);
+        public Task<MetodosPagos?> GetById(int id);
     }
 }
