@@ -13,7 +13,6 @@ namespace SistemaLlavesWebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [ExcludeFromCodeCoverage]
     public class ProductosController : ControllerBase
     {
         private readonly IProductService productService;
@@ -52,8 +51,8 @@ namespace SistemaLlavesWebAPI.Controllers
             if (id != productos.ProductoId) return BadRequest();
             try
             {
-                var product = await productService.PutAsync(productos);
-                return Ok(product);
+                await productService.PutAsync(productos);
+                return Ok();
             }
             catch (Exception ex)
             {
