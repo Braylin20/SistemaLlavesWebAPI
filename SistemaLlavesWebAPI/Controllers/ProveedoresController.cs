@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Shared.Models;
 using SistemaLlavesWebAPI.Interfaces;
 
@@ -7,7 +6,6 @@ namespace SistemaLlavesWebAPI.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[ExcludeFromCodeCoverage]
 public class ProveedoresController(IProviderService providerService) : ControllerBase
 {
     // GET: api/Proveedores
