@@ -14,13 +14,12 @@ namespace SistemaLlavesWebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [ExcludeFromCodeCoverage]
     public class MetodosPagosController : ControllerBase
     {
         private readonly IMetodoPagosService metodoPagosService;
 
 
-        private MetodosPagosController(IMetodoPagosService metodoPagosService)
+        public MetodosPagosController(IMetodoPagosService metodoPagosService)
         {
             this.metodoPagosService = metodoPagosService;
         }
@@ -76,7 +75,7 @@ namespace SistemaLlavesWebAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMetodosPagos(int id)
         {
-            var metodoPago = metodoPagosService.GetById(id);
+            var metodoPago = await metodoPagosService.DeleteAsync(id);
             if (metodoPago is null) return NotFound();
 
             return Ok(metodoPago);
