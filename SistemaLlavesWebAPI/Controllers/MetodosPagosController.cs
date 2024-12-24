@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Shared.Models;
 using SistemaLlavesWebAPI.Dal;
+using SistemaLlavesWebAPI.Interfaces;
 
 namespace SistemaLlavesWebAPI.Controllers
 {
@@ -16,30 +17,30 @@ namespace SistemaLlavesWebAPI.Controllers
     [ExcludeFromCodeCoverage]
     public class MetodosPagosController : ControllerBase
     {
-        private readonly Context _context;
+        private readonly IMetodoPagosService metodoPagosService;
 
-        public MetodosPagosController(Context context)
+
+        private MetodosPagosController(IMetodoPagosService metodoPagosService)
         {
-            _context = context;
+            this.metodoPagosService = metodoPagosService;
         }
+
+
 
         // GET: api/MetodosPagos
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MetodosPagos>>> GetMetodosPagos()
         {
-            return await _context.MetodosPagos.ToListAsync();
+            return await metodoPagosService.GetAsync();
         }
 
         // GET: api/MetodosPagos/5
         [HttpGet("{id}")]
         public async Task<ActionResult<MetodosPagos>> GetMetodosPagos(int id)
         {
-            var metodosPagos = await _context.MetodosPagos.FindAsync(id);
+            var metodosPagos = await metodoPagosService.GetById(id);
 
-            if (metodosPagos == null)
-            {
-                return NotFound();
-            }
+            if (metodosPagos == null) return NotFound();
 
             return metodosPagos;
         }
@@ -49,39 +50,24 @@ namespace SistemaLlavesWebAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutMetodosPagos(int id, MetodosPagos metodosPagos)
         {
-            if (id != metodosPagos.MetodoPagoId)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(metodosPagos).State = EntityState.Modified;
+            if (id != metodosPagos.MetodoPagoId) return BadRequest();
 
             try
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
+                await metodoPagosService.PutAsync(metodosPagos);
+                return Ok();
+            }catch(Exception ex)
             {
-                if (!MetodosPagosExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return BadRequest(ex.Message);
             }
 
-            return NoContent();
         }
-
         // POST: api/MetodosPagos
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<MetodosPagos>> PostMetodosPagos(MetodosPagos metodosPagos)
         {
-            _context.MetodosPagos.Add(metodosPagos);
-            await _context.SaveChangesAsync();
+            if(!await metodoPagosService.AddAsync(metodosPagos)) return BadRequest();
 
             return CreatedAtAction("GetMetodosPagos", new { id = metodosPagos.MetodoPagoId }, metodosPagos);
         }
@@ -90,21 +76,10 @@ namespace SistemaLlavesWebAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMetodosPagos(int id)
         {
-            var metodosPagos = await _context.MetodosPagos.FindAsync(id);
-            if (metodosPagos == null)
-            {
-                return NotFound();
-            }
+            var metodoPago = metodoPagosService.GetById(id);
+            if (metodoPago is null) return NotFound();
 
-            _context.MetodosPagos.Remove(metodosPagos);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool MetodosPagosExists(int id)
-        {
-            return _context.MetodosPagos.Any(e => e.MetodoPagoId == id);
+            return Ok(metodoPago);
         }
     }
 }
