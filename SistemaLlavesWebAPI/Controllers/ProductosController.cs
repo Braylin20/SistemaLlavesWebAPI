@@ -52,8 +52,8 @@ namespace SistemaLlavesWebAPI.Controllers
             if (id != productos.ProductoId) return BadRequest();
             try
             {
-                var product = await productService.PutAsync(productos);
-                return Ok(product);
+                await productService.PutAsync(productos);
+                return Ok();
             }
             catch (Exception ex)
             {
