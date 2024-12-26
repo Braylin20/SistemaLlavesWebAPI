@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Shared.Models;
 using SistemaLlavesWebAPI.Dal;
+using SistemaLlavesWebAPI.Interfaces;
+using SistemaLlavesWebAPI.Services;
+
 
 namespace SistemaLlavesWebAPI.Controllers
 {
@@ -16,32 +19,40 @@ namespace SistemaLlavesWebAPI.Controllers
     [ExcludeFromCodeCoverage]
     public class VentasController : ControllerBase
     {
-        private readonly Context _context;
+        private readonly ISalesService _salesService;
 
-        public VentasController(Context context)
+        public VentasController(ISalesService salesService)
         {
-            _context = context;
+            _salesService = salesService;
         }
 
         // GET: api/Ventas
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Ventas>>> GetVentas()
         {
-            return await _context.Ventas.ToListAsync();
+            var ventas = await _salesService.GetAsync();
+            if (ventas == null || !ventas.Any())
+            {
+                return NotFound("No se encontraron ventas.");
+            }
+            return Ok(ventas);
         }
 
         // GET: api/Ventas/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Ventas>> GetVentas(int id)
+        public async Task<ActionResult<Ventas>> GetVentasById(int id)
         {
-            var ventas = await _context.Ventas.FindAsync(id);
-
-            if (ventas == null)
+            if (id <= 0)
             {
-                return NotFound();
+                return BadRequest("El ID debe ser mayor a 0.");
             }
 
-            return ventas;
+            var venta = await _salesService.GetVentaById(id);
+            if (venta == null)
+            {
+                return NotFound($"No se encontró la venta con el ID = {id}.");
+            }
+            return Ok(venta);
         }
 
         // PUT: api/Ventas/5
@@ -51,60 +62,64 @@ namespace SistemaLlavesWebAPI.Controllers
         {
             if (id != ventas.VentaId)
             {
-                return BadRequest();
+                return BadRequest("El ID de la URL no coincide con el ID del objeto.");
             }
 
-            _context.Entry(ventas).State = EntityState.Modified;
+            if (!await VentasExists(id))
+            {
+                return NotFound($"No se encontró la venta con el ID = {id}.");
+            }
 
             try
             {
-                await _context.SaveChangesAsync();
+                var ventaActualizada = await _salesService.PutAsync(ventas);
+                return NoContent();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                if (!VentasExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
             }
-
-            return NoContent();
         }
+
 
         // POST: api/Ventas
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Ventas>> PostVentas(Ventas ventas)
         {
-            _context.Ventas.Add(ventas);
-            await _context.SaveChangesAsync();
+            if (ventas == null)
+            {
+                return BadRequest("La venta no puede ser nula.");
+            }
 
-            return CreatedAtAction("GetVentas", new { id = ventas.VentaId }, ventas);
+            var nuevaVenta = await _salesService.AddAsync(ventas);
+
+            return CreatedAtAction(nameof(GetVentasById), new { id = nuevaVenta.VentaId }, nuevaVenta);
         }
 
         // DELETE: api/Ventas/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteVentas(int id)
         {
-            var ventas = await _context.Ventas.FindAsync(id);
-            if (ventas == null)
+            if (id <= 0)
             {
-                return NotFound();
+                return BadRequest("El ID debe ser mayor que 0.");
             }
 
-            _context.Ventas.Remove(ventas);
-            await _context.SaveChangesAsync();
+            if (!await VentasExists(id))
+            {
+                return NotFound($"No se encontró la venta con el ID = {id}.");
+            }
 
+            var resultado = await _salesService.DeleteAsync(id);
             return NoContent();
         }
 
-        private bool VentasExists(int id)
+        private async Task<bool> VentasExists(int id)
         {
-            return _context.Ventas.Any(e => e.VentaId == id);
+            var venta = await _salesService.GetVentaById(id);
+            return venta != null;
         }
+
     }
 }

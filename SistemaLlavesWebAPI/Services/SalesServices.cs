@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Shared.Models;
 using SistemaLlavesWebAPI.Dal;
 using SistemaLlavesWebAPI.Interfaces;
@@ -11,16 +12,20 @@ namespace SistemaLlavesWebAPI.Services
     {
         private readonly Context _context;
 
-        public SalesServices(Context context)
-        {
-            this._context = context;
-        }
-
         public async Task<IEnumerable<Ventas>> GetAsync()
         {
             return await _context.Ventas.ToListAsync();
         }
+        public async Task<Ventas?> GetVentaById(int id)
+        {
+            if (id <= 0)
+            {
+                return null;
+            }
 
+            var venta = await _context.Ventas.FindAsync(id);
+            return venta;
+        }
         public async Task<Ventas> AddAsync(Ventas ventas)
         {
             await _context.Ventas.AddAsync(ventas);
@@ -46,6 +51,5 @@ namespace SistemaLlavesWebAPI.Services
             await _context.SaveChangesAsync();
             return result.Entity;
         }
-
     }
 }
