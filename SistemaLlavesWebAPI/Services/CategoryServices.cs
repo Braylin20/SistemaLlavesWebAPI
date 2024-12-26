@@ -24,6 +24,10 @@ namespace SistemaLlavesWebAPI.Services
             }
 
             var categoria = await _context.Categorias.FindAsync(id);
+            if (categoria == null)
+            {
+                throw new KeyNotFoundException("Categoría no encontrada.");
+            }
             return categoria;
         }
 
