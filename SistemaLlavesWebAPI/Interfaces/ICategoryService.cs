@@ -8,5 +8,6 @@ namespace SistemaLlavesWebAPI.Interfaces
         Task<Categorias> AddAsync(Categorias categorias);
         Task<Categorias> PutAsync(Categorias categorias);
         Task<bool> DeleteAsync(int categoriaId);
+        Task<Categorias> GetCategoryById(int id);
     }
 }

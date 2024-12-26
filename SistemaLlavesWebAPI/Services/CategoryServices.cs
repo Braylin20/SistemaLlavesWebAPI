@@ -11,14 +11,21 @@ namespace SistemaLlavesWebAPI.Services
     {
         private readonly Context _context;
 
-        public CategoryServices(Context context)
-        {
-            this._context = context;
-        }
-
         public async Task<IEnumerable<Categorias>> GetAsync()
         {
             return await _context.Categorias.ToListAsync();
+        }
+
+        public async Task<Categorias?> GetCategoryById(int id)
+        {
+
+            if (id <= 0)
+            {
+                return null;
+            }
+
+            var categoria = await _context.Categorias.FindAsync(id);
+            return categoria;
         }
 
         public async Task<Categorias> AddAsync(Categorias categorias)
