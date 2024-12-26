@@ -16,9 +16,8 @@ namespace SistemaLlavesWebAPI.Services
             return await _context.Categorias.ToListAsync();
         }
 
-        public async Task<Categorias?> GetCategoryById(int id)
+        public async Task<Categorias> GetCategoryById(int id)
         {
-
             if (id <= 0)
             {
                 return null;
