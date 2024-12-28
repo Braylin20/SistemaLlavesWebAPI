@@ -72,7 +72,7 @@ namespace SistemaLlavesWebAPI.Controllers
 
             try
             {
-                var ventaActualizada = await _salesService.PutAsync(ventas);
+                await _salesService.PutAsync(ventas); 
                 return NoContent();
             }
             catch (Exception ex)
@@ -81,20 +81,21 @@ namespace SistemaLlavesWebAPI.Controllers
             }
         }
 
-
         // POST: api/Ventas
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Ventas>> PostVentas(Ventas ventas)
         {
-            if (ventas == null)
+            try
             {
-                return BadRequest("La venta no puede ser nula.");
+                var nuevaVenta = await _salesService.AddAsync(ventas);
+                return CreatedAtAction(nameof(GetVentasById), new { id = nuevaVenta.VentaId }, nuevaVenta);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
             }
 
-            var nuevaVenta = await _salesService.AddAsync(ventas);
-
-            return CreatedAtAction(nameof(GetVentasById), new { id = nuevaVenta.VentaId }, nuevaVenta);
         }
 
         // DELETE: api/Ventas/5

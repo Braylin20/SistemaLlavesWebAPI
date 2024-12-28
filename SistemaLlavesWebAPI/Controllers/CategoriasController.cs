@@ -29,8 +29,8 @@ namespace SistemaLlavesWebAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Categorias>>> GetCategorias()
         {
-           var categoria = await _categoryService.GetAsync();
-            if(categoria == null)
+            var categoria = await _categoryService.GetAsync();
+            if (categoria == null)
             {
                 return NotFound();
             }
@@ -40,7 +40,7 @@ namespace SistemaLlavesWebAPI.Controllers
         // GET: api/Categorias/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Categorias>> GetCategoryById(int id)
-        { 
+        {
             if (id <= 0)
             {
                 return BadRequest("Error, no es valido el id");
@@ -65,12 +65,12 @@ namespace SistemaLlavesWebAPI.Controllers
 
             if (!await CategoriasExists(id))
             {
-                return NotFound($"No se encontró la categoria con el ID = {id}.");
+                return NotFound($"No se encontró la categoría con el ID = {id}.");
             }
 
             try
             {
-                var categoriaActualizada = await _categoryService.PutAsync(categorias);
+                await _categoryService.PutAsync(categorias);
                 return NoContent();
             }
             catch (Exception ex)
@@ -78,6 +78,7 @@ namespace SistemaLlavesWebAPI.Controllers
                 return StatusCode(500, $"Error interno del servidor: {ex.Message}");
             }
         }
+
 
         // POST: api/Categorias
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -96,20 +97,17 @@ namespace SistemaLlavesWebAPI.Controllers
 
         // DELETE: api/Categorias/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCategorias(int id)
+        public async Task<IActionResult> DeleteAsync(int id)
         {
-            if (id <= 0)
+            try
             {
-                return BadRequest("El ID debe ser mayor que 0.");
+                var deletedCategoria = await _categoryService.DeleteAsync(id);
+                return Ok(deletedCategoria);
             }
-
-            if (!await CategoriasExists(id))
+            catch (KeyNotFoundException ex)
             {
-                return NotFound($"No se encontró la categoria con el ID = {id}.");
+                return NotFound(new { message = ex.Message });
             }
-
-            var resultado = await _categoryService.DeleteAsync(id);
-            return NoContent();
         }
 
         private async Task<bool> CategoriasExists(int id)
