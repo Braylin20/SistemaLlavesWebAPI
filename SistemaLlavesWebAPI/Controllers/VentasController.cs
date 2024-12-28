@@ -102,18 +102,15 @@ namespace SistemaLlavesWebAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteVentas(int id)
         {
-            if (id <= 0)
+            try
             {
-                return BadRequest("El ID debe ser mayor que 0.");
+                var deletedVentas = await _salesService.DeleteAsync(id);
+                return Ok(deletedVentas);
             }
-
-            if (!await VentasExists(id))
+            catch (KeyNotFoundException ex)
             {
-                return NotFound($"No se encontró la venta con el ID = {id}.");
+                return NotFound(new { message = ex.Message });
             }
-
-            var resultado = await _salesService.DeleteAsync(id);
-            return NoContent();
         }
 
         private async Task<bool> VentasExists(int id)
