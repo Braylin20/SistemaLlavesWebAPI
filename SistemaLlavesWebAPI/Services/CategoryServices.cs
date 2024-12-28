@@ -7,9 +7,9 @@ using System.Diagnostics.CodeAnalysis;
 namespace SistemaLlavesWebAPI.Services
 {
     [ExcludeFromCodeCoverage]
-    public class CategoryServices: ICategoryService
+    public class CategoryServices(Context context): ICategoryService
     {
-        private readonly Context _context;
+        private readonly Context _context = context;
 
         public async Task<IEnumerable<Categorias>> GetAsync()
         {
@@ -18,11 +18,6 @@ namespace SistemaLlavesWebAPI.Services
 
         public async Task<Categorias> GetCategoryById(int id)
         {
-            if (id <= 0)
-            {
-                return null;
-            }
-
             var categoria = await _context.Categorias.FindAsync(id);
             if (categoria == null)
             {

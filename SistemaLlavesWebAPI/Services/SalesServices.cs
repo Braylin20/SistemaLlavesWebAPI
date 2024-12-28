@@ -8,9 +8,9 @@ using System.Diagnostics.CodeAnalysis;
 namespace SistemaLlavesWebAPI.Services
 {
     [ExcludeFromCodeCoverage]
-    public class SalesServices : ISalesService
+    public class SalesServices(Context context) : ISalesService
     {
-        private readonly Context _context;
+        private readonly Context _context = context;
 
         public async Task<IEnumerable<Ventas>> GetAsync()
         {
@@ -18,12 +18,11 @@ namespace SistemaLlavesWebAPI.Services
         }
         public async Task<Ventas?> GetVentaById(int id)
         {
-            if (id <= 0)
-            {
-                return null;
-            }
-
             var venta = await _context.Ventas.FindAsync(id);
+            if (venta == null)
+            {
+                throw new KeyNotFoundException("Categoría no encontrada.");
+            }
             return venta;
         }
         public async Task<Ventas> AddAsync(Ventas ventas)
@@ -35,13 +34,13 @@ namespace SistemaLlavesWebAPI.Services
 
         public async Task<bool> DeleteAsync(int ventaId)
         {
-            var venta = await _context.Categorias.FindAsync(ventaId);
+            var venta = await _context.Ventas.FindAsync(ventaId);
             if (venta == null)
             {
                 return false;
             }
 
-            _context.Categorias.Remove(venta);
+            _context.Ventas.Remove(venta);
             await _context.SaveChangesAsync();
             return true;
         }
