@@ -25,6 +25,7 @@ namespace SistemaLlavesWebAPI.Services.DI
             services.AddScoped<IWarrantyService, WarrantyService>();
          
             return services;
+
         }
     }
 }
