@@ -7,7 +7,6 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace SistemaLlavesWebAPI.Services
 {
-    [ExcludeFromCodeCoverage]
     public class SalesServices(Context context) : ISalesService
     {
         private readonly Context _context = context;
