@@ -4,12 +4,14 @@ using SistemaLlavesWebAPI.Abstractions;
 using SistemaLlavesWebAPI.Data.DI;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace SistemaLlavesWebAPI.Services.DI
 {
+    [ExcludeFromCodeCoverage]
     public static class RegisterServices
     {
         public static IServiceCollection Register_Services(this IServiceCollection services)
