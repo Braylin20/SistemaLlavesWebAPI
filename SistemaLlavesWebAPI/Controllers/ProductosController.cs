@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Models;
 using SistemaLlavesWebAPI.Dal;
-using SistemaLlavesWebAPI.Interfaces;
+using SistemaLlavesWebAPI.Abstractions;
 
 namespace SistemaLlavesWebAPI.Controllers
 {
