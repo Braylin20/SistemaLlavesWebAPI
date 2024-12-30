@@ -22,9 +22,6 @@ namespace SistemaLlavesWebAPI
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            var ConStr = 
-                builder.Configuration.GetConnectionString("ConStr");
-
             //Inyeccion del contexto
             builder.Services.Register_Services();
 
