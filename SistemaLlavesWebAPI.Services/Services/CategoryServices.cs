@@ -7,21 +7,26 @@ using System.Diagnostics.CodeAnalysis;
 namespace SistemaLlavesWebAPI.Services
 {
     [ExcludeFromCodeCoverage]
-    public class CategoryServices: ICategoryService
+    public class CategoryServices(Context context): ICategoryService
     {
-        private readonly Context _context;
+        private readonly Context _context = context;
 
-        public CategoryServices(Context context)
-        {
-            this._context = context;
-        }
-
-        public async Task<IEnumerable<Categorias>> GetAsync()
+        public async Task<List<Categorias>> GetAsync()
         {
             return await _context.Categorias.ToListAsync();
         }
 
-        public async Task<Categorias> AddAsync(Categorias categorias)
+        public async Task<Categorias> GetCategoryById(int id)
+        {
+            var categoria = await _context.Categorias.FindAsync(id);
+            if (categoria == null)
+            {
+                throw new KeyNotFoundException("Categoría no encontrada.");
+            }
+            return categoria;
+        }
+
+        public async Task<Categorias?> AddAsync(Categorias categorias)
         {
             await _context.Categorias.AddAsync(categorias);
             await _context.SaveChangesAsync();
@@ -61,5 +66,7 @@ namespace SistemaLlavesWebAPI.Services
             await _context.SaveChangesAsync();
             return true;
         }
+
+    
     }
 }

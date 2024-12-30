@@ -1,12 +1,12 @@
 ﻿using Shared.Models;
 
-namespace SistemaLlavesWebAPI.Abstractions
+namespace SistemaLlavesWebAPI.Abstractions;
+
+public interface ICategoryService
 {
-    public interface ICategoryService
-    {
-        Task<IEnumerable<Categorias>> GetAsync();
-        Task<Categorias> AddAsync(Categorias categorias);
-        Task<Categorias> PutAsync(Categorias categorias);
-        Task<bool> DeleteAsync(int categoriaId);
-    }
+    Task<List<Categorias>> GetAsync();
+    Task<Categorias?> AddAsync(Categorias categorias);
+    Task<Categorias> PutAsync(Categorias categorias);
+    Task<bool> DeleteAsync(int categoriaId);
+    Task<Categorias> GetCategoryById(int id);
 }
