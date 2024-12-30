@@ -11,7 +11,7 @@ namespace SistemaLlavesWebAPI.Services
     {
         private readonly Context _context = context;
 
-        public async Task<IEnumerable<Categorias>> GetAsync()
+        public async Task<List<Categorias>> GetAsync()
         {
             return await _context.Categorias.ToListAsync();
         }
@@ -26,7 +26,7 @@ namespace SistemaLlavesWebAPI.Services
             return categoria;
         }
 
-        public async Task<Categorias> AddAsync(Categorias categorias)
+        public async Task<Categorias?> AddAsync(Categorias categorias)
         {
             await _context.Categorias.AddAsync(categorias);
             await _context.SaveChangesAsync();
@@ -66,5 +66,7 @@ namespace SistemaLlavesWebAPI.Services
             await _context.SaveChangesAsync();
             return true;
         }
+
+    
     }
 }
