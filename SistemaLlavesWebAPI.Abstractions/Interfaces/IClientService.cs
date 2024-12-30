@@ -1,6 +1,6 @@
 ﻿using Shared.Models;
 
-namespace SistemaLlavesWebAPI.Interfaces;
+namespace SistemaLlavesWebAPI.Abstractions;
 
 public interface IClientService
 {

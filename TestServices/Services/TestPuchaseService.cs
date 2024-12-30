@@ -6,7 +6,7 @@ using SistemaLlavesWebAPI.Services;
 using Xunit;
 using SistemaLlavesWebAPI.Dal;
 using Shared.Models;
-using SistemaLlavesWebAPI.Interfaces;
+using SistemaLlavesWebAPI.Abstractions;
 
 namespace TestServices.Services
 {

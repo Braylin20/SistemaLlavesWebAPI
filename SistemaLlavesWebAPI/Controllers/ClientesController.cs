@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Shared.Models;
-using SistemaLlavesWebAPI.Interfaces;
+using SistemaLlavesWebAPI.Abstractions;
 
 namespace SistemaLlavesWebAPI.Controllers;
 
