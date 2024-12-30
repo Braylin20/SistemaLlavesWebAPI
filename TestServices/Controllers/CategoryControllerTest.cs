@@ -74,7 +74,7 @@ namespace TestServices.Controller
         [Fact]
         public async Task DeleteCategory_Return_OkResult()
         {
-            //Arrange
+            // Arrange
             var category = new Categorias
             {
                 CategoriaId = 1,
@@ -83,12 +83,13 @@ namespace TestServices.Controller
 
             _mockCategoryService.Setup(c => c.DeleteAsync(1)).ReturnsAsync(true);
 
-            //Act
+            // Act
             var result = await _controller.DeleteAsync(1);
 
-            //Assert
+            // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
-            Assert.Equal(true, okResult.Value);
+            var isDeleted = Assert.IsType<bool>(okResult.Value);
+            Assert.True(isDeleted, "The category should have been successfully deleted.");
         }
 
         [Fact]

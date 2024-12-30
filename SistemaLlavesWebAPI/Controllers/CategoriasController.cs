@@ -99,11 +99,5 @@ namespace SistemaLlavesWebAPI.Controllers
                 return NotFound(new { message = ex.Message });
             }
         }
-
-        private async Task<bool> CategoriasExists(int id)
-        {
-            var categorias = await _categoryService.GetCategoryById(id);
-            return categorias != null;
-        }
     }
 }

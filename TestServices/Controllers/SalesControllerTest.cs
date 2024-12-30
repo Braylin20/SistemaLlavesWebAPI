@@ -82,7 +82,7 @@ namespace TestServices.Controllers
         public async Task GetVentasById_Should_Return_NotFound()
         {
             // Arrange
-            _mockSalesService.Setup(s => s.GetVentaById(1)).ReturnsAsync((Ventas)null);
+            _mockSalesService.Setup(s => s.GetVentaById(1)).ReturnsAsync((Ventas?)null);
 
             // Act
             var result = await _controller.GetVentasById(1);
@@ -161,7 +161,7 @@ namespace TestServices.Controllers
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
-            Assert.True((bool)okResult.Value);
+            Assert.True((bool?)okResult.Value);
         }
     }
 }
