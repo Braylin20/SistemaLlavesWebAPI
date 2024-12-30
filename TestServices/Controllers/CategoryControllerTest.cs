@@ -37,7 +37,7 @@ namespace TestServices.Controller
             var result = await _controller.GetCategorias();
 
             //assert
-            var okResult = Assert.IsType<ActionResult<IEnumerable<Categorias>>>(result);
+            var okResult = Assert.IsType<ActionResult<List<Categorias>>>(result);
             Assert.Equal(categories, okResult.Value);
         }
 
