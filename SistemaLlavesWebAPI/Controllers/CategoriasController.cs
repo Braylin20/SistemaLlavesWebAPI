@@ -8,40 +8,43 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Shared.Models;
 using SistemaLlavesWebAPI.Dal;
+using SistemaLlavesWebAPI.Interfaces;
+using SistemaLlavesWebAPI.Services;
 
 namespace SistemaLlavesWebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [ExcludeFromCodeCoverage]
     public class CategoriasController : ControllerBase
     {
-        private readonly Context _context;
+        private readonly ICategoryService _categoryService;
 
-        public CategoriasController(Context context)
+        public CategoriasController(ICategoryService categoryService)
         {
-            _context = context;
+            _categoryService = categoryService;
         }
 
         // GET: api/Categorias
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Categorias>>> GetCategorias()
         {
-            return await _context.Categorias.ToListAsync();
+            return await _categoryService.GetAsync();
+            
         }
 
         // GET: api/Categorias/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Categorias>> GetCategorias(int id)
+        public async Task<ActionResult<Categorias>> GetCategoryById(int id)
         {
-            var categorias = await _context.Categorias.FindAsync(id);
-
-            if (categorias == null)
+           
+            var categoria = await _categoryService.GetCategoryById(id);
+        
+            if(categoria == null)
             {
-                return NotFound();
+               return BadRequest("No encontrado");
             }
-
-            return categorias;
+            return Ok(categoria);
+            
         }
 
         // PUT: api/Categorias/5
@@ -51,60 +54,50 @@ namespace SistemaLlavesWebAPI.Controllers
         {
             if (id != categorias.CategoriaId)
             {
-                return BadRequest();
+                return BadRequest("El ID de la URL no coincide con el ID del objeto.");
             }
 
-            _context.Entry(categorias).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _categoryService.PutAsync(categorias);
+                return NoContent();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                if (!CategoriasExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
             }
-
-            return NoContent();
         }
+
 
         // POST: api/Categorias
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Categorias>> PostCategorias(Categorias categorias)
         {
-            _context.Categorias.Add(categorias);
-            await _context.SaveChangesAsync();
+            if (categorias == null)
+            {
+                return BadRequest("La categoria no puede ser nula.");
+            }
 
-            return CreatedAtAction("GetCategorias", new { id = categorias.CategoriaId }, categorias);
+            var nuevaCategoria = await _categoryService.AddAsync(categorias);
+
+            return CreatedAtAction(nameof(GetCategoryById), new { id = nuevaCategoria?.CategoriaId }, nuevaCategoria);
         }
 
         // DELETE: api/Categorias/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCategorias(int id)
+        public async Task<IActionResult> DeleteAsync(int id)
         {
-            var categorias = await _context.Categorias.FindAsync(id);
-            if (categorias == null)
+            try
             {
-                return NotFound();
+                var deletedCategoria = await _categoryService.DeleteAsync(id);
+                return Ok(deletedCategoria);
             }
-
-            _context.Categorias.Remove(categorias);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool CategoriasExists(int id)
-        {
-            return _context.Categorias.Any(e => e.CategoriaId == id);
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
         }
     }
 }

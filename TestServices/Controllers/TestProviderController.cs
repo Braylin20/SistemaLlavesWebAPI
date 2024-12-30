@@ -4,7 +4,7 @@ using Shared.Models;
 using SistemaLlavesWebAPI.Controllers;
 using SistemaLlavesWebAPI.Interfaces;
 
-namespace TestServices.Controllers;
+namespace TestServices.Controller;
 
 public class TestProveedoresController
 {
