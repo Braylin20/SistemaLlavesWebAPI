@@ -15,7 +15,6 @@ namespace SistemaLlavesWebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [ExcludeFromCodeCoverage]
     public class CategoriasController : ControllerBase
     {
         private readonly ICategoryService _categoryService;
@@ -29,28 +28,23 @@ namespace SistemaLlavesWebAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Categorias>>> GetCategorias()
         {
-            var categoria = await _categoryService.GetAsync();
-            if (categoria == null)
-            {
-                return NotFound();
-            }
-            return Ok(categoria);
+            return await _categoryService.GetAsync();
+            
         }
 
         // GET: api/Categorias/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Categorias>> GetCategoryById(int id)
         {
-            if (id <= 0)
+           
+            var categoria = await _categoryService.GetCategoryById(id);
+        
+            if(categoria == null)
             {
-                return BadRequest("Error, no es valido el id");
+               return BadRequest("No encontrado");
             }
-            var categorias = await _categoryService.GetCategoryById(id);
-            if (categorias == null)
-            {
-                NotFound("No se encontro el id");
-            }
-            return Ok(categorias);
+            return Ok(categoria);
+            
         }
 
         // PUT: api/Categorias/5
@@ -63,10 +57,6 @@ namespace SistemaLlavesWebAPI.Controllers
                 return BadRequest("El ID de la URL no coincide con el ID del objeto.");
             }
 
-            if (!await CategoriasExists(id))
-            {
-                return NotFound($"No se encontró la categoría con el ID = {id}.");
-            }
 
             try
             {
@@ -92,7 +82,7 @@ namespace SistemaLlavesWebAPI.Controllers
 
             var nuevaCategoria = await _categoryService.AddAsync(categorias);
 
-            return CreatedAtAction(nameof(GetCategoryById), new { id = nuevaCategoria.CategoriaId }, nuevaCategoria);
+            return CreatedAtAction(nameof(GetCategoryById), new { id = nuevaCategoria?.CategoriaId }, nuevaCategoria);
         }
 
         // DELETE: api/Categorias/5
