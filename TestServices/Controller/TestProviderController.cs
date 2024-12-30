@@ -2,9 +2,9 @@
 using Moq;
 using Shared.Models;
 using SistemaLlavesWebAPI.Controllers;
-using SistemaLlavesWebAPI.Interfaces;
+using SistemaLlavesWebAPI.Abstractions;
 
-namespace TestServices.Controllers;
+namespace TestServices.Controller;
 
 public class TestProveedoresController
 {
