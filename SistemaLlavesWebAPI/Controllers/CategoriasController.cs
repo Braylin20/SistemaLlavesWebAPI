@@ -26,7 +26,7 @@ namespace SistemaLlavesWebAPI.Controllers
 
         // GET: api/Categorias
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Categorias>>> GetCategorias()
+        public async Task<ActionResult<List<Categorias>>> GetCategorias()
         {
             return await _categoryService.GetAsync();
             
