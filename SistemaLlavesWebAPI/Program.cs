@@ -1,9 +1,10 @@
 
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
-using SistemaLlavesWebAPI.Dal;
-using SistemaLlavesWebAPI.Interfaces;
+using SistemaLlavesWebAPI.Abstractions;
+using SistemaLlavesWebAPI.Data.DI;
 using SistemaLlavesWebAPI.Services;
+using SistemaLlavesWebAPI.Services.DI;
 
 namespace SistemaLlavesWebAPI
 {
@@ -21,14 +22,14 @@ namespace SistemaLlavesWebAPI
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            builder.Services.AddScoped<IProductService, ProductServices>();
-
             var ConStr = 
                 builder.Configuration.GetConnectionString("ConStr");
-            
-            builder.Services.AddDbContext<Context>(options =>
-                options.UseSqlServer(ConStr));
-            
+
+            //Inyeccion del contexto
+            builder.Services.Register_Services();
+
+            builder.Services.AddScoped<IClientService, ClientService>();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
