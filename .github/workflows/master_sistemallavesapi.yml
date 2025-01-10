@@ -18,11 +18,7 @@ jobs:
         with:
           dotnet-version: '8.x'
           include-prerelease: true
-
-      # Nuevo paso para listar archivos y validar la ubicación del archivo .sln
-      - name: Listar archivos para depuración
-        run: dir /s /b
-
+          
       # Corrección: especificar la ruta del archivo de solución o proyecto
       - name: Build with dotnet
         run: dotnet build ./SistemaLlavesWebApi/SistemaLlavesWebApi.sln --configuration Release
