@@ -13,7 +13,7 @@ public class Garantias
     public int GarantiaId { get; set; }
     
     public string? Descripcion { get; set; }
-    public DateOnly InicioGarantia { get; set; }
-    public DateOnly FinGarantia { get; set; }
+    public DateTime InicioGarantia { get; set; }
+    public DateTime FinGarantia { get; set; }
     public bool Estado { get; set; }
 }
