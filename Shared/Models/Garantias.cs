@@ -11,7 +11,6 @@ public class Garantias
 {
     [Key]
     public int GarantiaId { get; set; }
-    
     public string? Descripcion { get; set; }
     public DateTime InicioGarantia { get; set; }
     public DateTime FinGarantia { get; set; }
