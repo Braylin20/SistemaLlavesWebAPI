@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Shared.Models;
 using SistemaLlavesWebAPI.Dal;
-using SistemaLlavesWebAPI.Interfaces;
+using SistemaLlavesWebAPI.Abstractions;
 using System.Diagnostics.CodeAnalysis;
 
 namespace SistemaLlavesWebAPI.Services

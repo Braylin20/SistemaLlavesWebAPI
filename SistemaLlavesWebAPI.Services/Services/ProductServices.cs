@@ -1,8 +1,7 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Shared.Models;
 using SistemaLlavesWebAPI.Dal;
-using SistemaLlavesWebAPI.Interfaces;
+using SistemaLlavesWebAPI.Abstractions;
 using System.Diagnostics.CodeAnalysis;
 
 
