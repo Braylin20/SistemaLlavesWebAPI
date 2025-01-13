@@ -30,6 +30,11 @@ namespace SistemaLlavesWebAPI
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
+            app.UseCors(options => {
+                options.AllowAnyOrigin();
+                options.AllowAnyMethod();
+            });
+
             app.UseSwagger();
             app.UseSwaggerUI();
 
