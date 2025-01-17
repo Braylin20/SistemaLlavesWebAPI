@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Shared.Models;
 using SistemaLlavesWebAPI.Abstractions;
 using SistemaLlavesWebAPI.Data.DI;
@@ -14,9 +15,9 @@ namespace SistemaLlavesWebAPI.Services.DI
     [ExcludeFromCodeCoverage]
     public static class RegisterServices
     {
-        public static IServiceCollection Register_Services(this IServiceCollection services)
+        public static IServiceCollection Register_Services(this IServiceCollection services, IConfiguration configuration)
         {
-            services.RegisterDbContextFactory();
+            services.RegisterDbContextFactory(configuration);
             services.AddScoped<ICategoryService, CategoryServices>();
             services.AddScoped<IPuchaseService, PuchaseService>();
             services.AddScoped<IProductService, ProductServices>();

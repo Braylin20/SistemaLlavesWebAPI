@@ -23,7 +23,7 @@ namespace SistemaLlavesWebAPI
             builder.Services.AddSwaggerGen();
 
             //Inyeccion del contexto
-            builder.Services.Register_Services();
+            builder.Services.Register_Services(builder.Configuration);
 
             builder.Services.AddScoped<IClientService, ClientService>();
 
