@@ -13,7 +13,7 @@ public class Compras
     [Key]
     public int CompraId {  get; set; }
  
-    public DateOnly Fecha { get; set; }
+    public DateTime Fecha { get; set; }
   
     public double Total { get; set; }
 
