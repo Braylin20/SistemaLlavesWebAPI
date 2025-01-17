@@ -11,7 +11,7 @@ namespace SistemaLlavesWebAPI.Services
 
         public async Task<List<Compras>> GetAllAsync()
         {
-            return await _context.Compras.ToListAsync();
+            return await _context.Compras.Include(t => t.ComprasDetalles).ToListAsync();
         }
 
         public async Task<Compras?>GetById(int id)
