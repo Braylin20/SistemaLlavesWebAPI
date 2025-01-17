@@ -14,7 +14,10 @@ public class Compras
     public int CompraId {  get; set; }
  
     public DateTime Fecha { get; set; }
+
   
+    public double Subtotal { get; set; }
+    public double Itbis { get; set; }
     public double Total { get; set; }
 
     [ForeignKey("CompraId")]
