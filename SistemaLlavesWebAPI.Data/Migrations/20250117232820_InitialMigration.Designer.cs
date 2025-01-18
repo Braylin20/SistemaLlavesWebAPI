@@ -12,7 +12,7 @@ using SistemaLlavesWebAPI.Dal;
 namespace SistemaLlavesWebAPI.Data.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20250117221333_InitialMigration")]
+    [Migration("20250117232820_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
