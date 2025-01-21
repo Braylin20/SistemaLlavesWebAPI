@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SistemaLlavesWebAPI.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigration : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -38,22 +38,6 @@ namespace SistemaLlavesWebAPI.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Clientes", x => x.ClienteId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Compras",
-                columns: table => new
-                {
-                    CompraId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Fecha = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Subtotal = table.Column<double>(type: "float", nullable: false),
-                    Itbis = table.Column<double>(type: "float", nullable: false),
-                    Total = table.Column<double>(type: "float", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Compras", x => x.CompraId);
                 });
 
             migrationBuilder.CreateTable(
@@ -129,6 +113,29 @@ namespace SistemaLlavesWebAPI.Data.Migrations
                         principalTable: "MetodosPagos",
                         principalColumn: "MetodoPagoId",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Compras",
+                columns: table => new
+                {
+                    CompraId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Fecha = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Subtotal = table.Column<double>(type: "float", nullable: false),
+                    Itbis = table.Column<double>(type: "float", nullable: false),
+                    Total = table.Column<double>(type: "float", nullable: false),
+                    ProovedorId = table.Column<int>(type: "int", nullable: true),
+                    ProveedorId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Compras", x => x.CompraId);
+                    table.ForeignKey(
+                        name: "FK_Compras_Proveedores_ProovedorId",
+                        column: x => x.ProovedorId,
+                        principalTable: "Proveedores",
+                        principalColumn: "ProovedorId");
                 });
 
             migrationBuilder.CreateTable(
@@ -226,6 +233,11 @@ namespace SistemaLlavesWebAPI.Data.Migrations
                         principalColumn: "VentaId",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Compras_ProovedorId",
+                table: "Compras",
+                column: "ProovedorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ComprasDetalle_CompraId",

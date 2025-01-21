@@ -20,6 +20,10 @@ public class Compras
     public double Itbis { get; set; }
     public double Total { get; set; }
 
+    [ForeignKey("ProovedorId")]
+    public Proveedores? Proveedor { get; set; }
+    public int ProveedorId { get; set; }
+
     [ForeignKey("CompraId")]
     public ICollection<ComprasDetalle> ComprasDetalles { get; set; } = new List<ComprasDetalle>();
 }

@@ -12,8 +12,8 @@ using SistemaLlavesWebAPI.Dal;
 namespace SistemaLlavesWebAPI.Data.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20250117232820_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20250121024509_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -81,6 +81,12 @@ namespace SistemaLlavesWebAPI.Data.Migrations
                     b.Property<double>("Itbis")
                         .HasColumnType("float");
 
+                    b.Property<int?>("ProovedorId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProveedorId")
+                        .HasColumnType("int");
+
                     b.Property<double>("Subtotal")
                         .HasColumnType("float");
 
@@ -88,6 +94,8 @@ namespace SistemaLlavesWebAPI.Data.Migrations
                         .HasColumnType("float");
 
                     b.HasKey("CompraId");
+
+                    b.HasIndex("ProovedorId");
 
                     b.ToTable("Compras");
                 });
@@ -306,6 +314,15 @@ namespace SistemaLlavesWebAPI.Data.Migrations
                     b.HasIndex("VentaId");
 
                     b.ToTable("VentasDetalle");
+                });
+
+            modelBuilder.Entity("Shared.Models.Compras", b =>
+                {
+                    b.HasOne("Shared.Models.Proveedores", "Proveedor")
+                        .WithMany()
+                        .HasForeignKey("ProovedorId");
+
+                    b.Navigation("Proveedor");
                 });
 
             modelBuilder.Entity("Shared.Models.ComprasDetalle", b =>
