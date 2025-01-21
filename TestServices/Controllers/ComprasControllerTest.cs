@@ -82,7 +82,7 @@ namespace TestServices.Controller
 
             // Assert
             var createdResult = Assert.IsType<CreatedAtActionResult>(result.Result);
-            Assert.Equal("GetProductos", createdResult.ActionName);
+            Assert.Equal("GetCompras", createdResult.ActionName);
         }
 
         [Fact]
