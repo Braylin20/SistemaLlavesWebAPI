@@ -14,10 +14,10 @@ namespace SistemaLlavesWebAPI.Services
             return await _context.Compras
                 .Include(t => t.ComprasDetalles)
                     .ThenInclude(p => p.Producto)
-                    .ThenInclude(p => p.Categoria) // Incluye la Categoría
+                    .ThenInclude(p => p.Categoria)
                 .Include(t => t.ComprasDetalles)
                     .ThenInclude(p => p.Producto)
-                    .ThenInclude(p => p.Proveedor) // Incluye el Proveedor
+                    .ThenInclude(p => p.Proveedor) 
                 .ToListAsync();
         }
 
