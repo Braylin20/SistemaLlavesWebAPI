@@ -22,7 +22,7 @@ public class Compras
 
     [ForeignKey("ProovedorId")]
     public Proveedores? Proveedor { get; set; }
-    public int ProveedorId { get; set; }
+    public int ProovedorId { get; set; }
 
     [ForeignKey("CompraId")]
     public ICollection<ComprasDetalle> ComprasDetalles { get; set; } = new List<ComprasDetalle>();
