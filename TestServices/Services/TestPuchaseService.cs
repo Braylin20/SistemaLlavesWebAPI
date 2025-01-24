@@ -1,12 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SistemaLlavesWebAPI.Services;
-using Xunit;
 using SistemaLlavesWebAPI.Dal;
 using Shared.Models;
-using SistemaLlavesWebAPI.Abstractions;
 
 namespace TestServices.Services
 {
@@ -37,7 +32,7 @@ namespace TestServices.Services
         [Fact]
         public async Task AddAsync_ShouldAddPurchase()
         {
-            var purchase = new Compras { CompraId = 5, Fecha = DateOnly.FromDateTime(DateTime.Now) };
+            var purchase = new Compras { CompraId = 5, Fecha = DateTime.Now };
 
             // Act
             var result = await _service.AddAsync(purchase);
@@ -53,8 +48,8 @@ namespace TestServices.Services
         public async Task GetAsync_ShouldReturnAllPurchases()
         {
             // Arrange
-            _context.Compras.Add(new Compras { CompraId = 1, Fecha = DateOnly.FromDateTime(DateTime.Now) });
-            _context.Compras.Add(new Compras { CompraId = 2, Fecha = DateOnly.FromDateTime(DateTime.Now) });
+            _context.Compras.Add(new Compras { CompraId = 1, Fecha = DateTime.Now });
+            _context.Compras.Add(new Compras { CompraId = 2, Fecha = DateTime.Now });
             await _context.SaveChangesAsync();
 
             // Act
@@ -68,7 +63,7 @@ namespace TestServices.Services
         public async Task DeleteAsync_ShouldRemovePurchase()
         {
             // Arrange
-            var purchase = new Compras { CompraId = 1, Fecha = DateOnly.FromDateTime(DateTime.Now) };
+            var purchase = new Compras { CompraId = 1, Fecha = DateTime.Now };
             _context.Compras.Add(purchase);
             await _context.SaveChangesAsync();
 
@@ -94,11 +89,11 @@ public async Task DeleteAsync_ShouldReturnNull_WhenPurchaseNotFound()
         public async Task PutAsync_ShouldUpdatePurchase()
         {
             // Arrange
-            var purchase = new Compras { CompraId = 1, Fecha = DateOnly.FromDateTime(DateTime.Now) };
+            var purchase = new Compras { CompraId = 1, Fecha = DateTime.Now };
             _context.Compras.Add(purchase);
             await _context.SaveChangesAsync();
 
-            var updatedPurchase = new Compras { CompraId = 1, Fecha = DateOnly.FromDateTime(DateTime.Now.AddDays(1)) };
+            var updatedPurchase = new Compras { CompraId = 1, Fecha = DateTime.Now };
 
             // Act
             var result = await _service.PutAsync(updatedPurchase);
@@ -113,7 +108,7 @@ public async Task DeleteAsync_ShouldReturnNull_WhenPurchaseNotFound()
         public async Task PutAsync_ShouldReturnNull_WhenPurchaseNotFound()
         {
             // Arrange
-            var updatedPurchase = new Compras { CompraId = 999, Fecha = DateOnly.FromDateTime(DateTime.Now.AddDays(1)) }; // ID inexistente
+            var updatedPurchase = new Compras { CompraId = 999, Fecha = DateTime.Now }; // ID inexistente
 
             // Act
             var result = await _service.PutAsync(updatedPurchase);
@@ -126,7 +121,7 @@ public async Task DeleteAsync_ShouldReturnNull_WhenPurchaseNotFound()
         public async Task GetCompra_ById_ReturnsGarantia_WhenIdIsValid()
         {
             // Arrange
-            var purchase = new Compras { CompraId = 1, Fecha = DateOnly.FromDateTime(DateTime.Now) };
+            var purchase = new Compras { CompraId = 1, Fecha = DateTime.Now };
             _context.Compras.Add(purchase);
             await _context.SaveChangesAsync();
 

@@ -22,18 +22,26 @@ namespace SistemaLlavesWebAPI
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            //Inyeccion del contexto
-            builder.Services.Register_Services();
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", policy =>
+                {
+                    policy.AllowAnyOrigin()
+                          .AllowAnyMethod()
+                          .AllowAnyHeader();
+                });
+            });
 
-            builder.Services.AddScoped<IClientService, ClientService>();
+            //Inyeccion del contexto
+            builder.Services.Register_Services(builder.Configuration);
+
+  
 
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
-            app.UseCors(options => {
-                options.AllowAnyOrigin();
-                options.AllowAnyMethod();
-            });
+
+            app.UseCors("AllowAll");
 
             app.UseSwagger();
             app.UseSwaggerUI();

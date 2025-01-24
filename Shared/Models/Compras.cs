@@ -13,9 +13,16 @@ public class Compras
     [Key]
     public int CompraId {  get; set; }
  
-    public DateOnly Fecha { get; set; }
+    public DateTime Fecha { get; set; }
+
   
+    public double Subtotal { get; set; }
+    public double Itbis { get; set; }
     public double Total { get; set; }
+
+    [ForeignKey("ProovedorId")]
+    public Proveedores? Proveedor { get; set; }
+    public int ProovedorId { get; set; }
 
     [ForeignKey("CompraId")]
     public ICollection<ComprasDetalle> ComprasDetalles { get; set; } = new List<ComprasDetalle>();

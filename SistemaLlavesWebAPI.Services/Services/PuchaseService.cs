@@ -11,10 +11,17 @@ namespace SistemaLlavesWebAPI.Services
 
         public async Task<List<Compras>> GetAllAsync()
         {
-            return await _context.Compras.ToListAsync();
+            return await _context.Compras
+                .Include(t => t.ComprasDetalles)
+                    .ThenInclude(p => p.Producto)
+                    .ThenInclude(p => p.Categoria)
+                .Include(t => t.ComprasDetalles)
+                    .ThenInclude(p => p.Producto)
+                    .ThenInclude(p => p.Proveedor) 
+                .ToListAsync();
         }
 
-        public async Task<Compras?>GetById(int id)
+        public async Task<Compras?> GetById(int id)
         {
             return await _context.Compras.FindAsync(id);
         }
@@ -42,11 +49,11 @@ namespace SistemaLlavesWebAPI.Services
         {
             var existingCompra = await _context.Compras.FindAsync(compra.CompraId);
 
-            if(existingCompra is null)
+            if (existingCompra is null)
             {
                 return null;
             }
-               
+
 
             _context.Entry(existingCompra).State = EntityState.Detached;
 

@@ -62,7 +62,7 @@ namespace SistemaLlavesWebAPI.Controllers
         public async Task<ActionResult<Compras>> PostCompras(Compras compras)
         {
             if (!await _puchaseService.AddAsync(compras)) return BadRequest();
-            return CreatedAtAction("GetProductos", new { id = compras.CompraId }, compras);
+            return CreatedAtAction("GetCompras", new { id = compras.CompraId }, compras);
 
         }
 

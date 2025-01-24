@@ -28,8 +28,8 @@ namespace TestServices.Controller
             // Arrange
             var comprasList = new List<Compras>
         {
-            new Compras { CompraId = 1, Fecha = DateOnly.FromDateTime(DateTime.Now) },
-            new Compras { CompraId = 2, Fecha = DateOnly.FromDateTime(DateTime.Now) }
+            new Compras { CompraId = 1, Fecha =DateTime.Now },
+            new Compras { CompraId = 2, Fecha = DateTime.Now }
         };
 
             _mockPurchaseService.Setup(s => s.GetAllAsync()).ReturnsAsync(comprasList);
@@ -46,7 +46,7 @@ namespace TestServices.Controller
         public async Task GetCompras_ById_ReturnsCompra()
         {
             // Arrange
-            var compra = new Compras { CompraId = 1, Fecha = DateOnly.FromDateTime(DateTime.Now) };
+            var compra = new Compras { CompraId = 1, Fecha = DateTime.Now };
             _mockPurchaseService.Setup(s => s.GetById(1)).ReturnsAsync(compra);
 
             // Act
@@ -74,7 +74,7 @@ namespace TestServices.Controller
         public async Task PostCompras_ReturnsCreatedAtAction_WhenSuccessful()
         {
             // Arrange
-            var compra = new Compras { CompraId = 1, Fecha = DateOnly.FromDateTime(DateTime.Now) };
+            var compra = new Compras { CompraId = 1, Fecha = DateTime.Now };
             _mockPurchaseService.Setup(s => s.AddAsync(compra)).ReturnsAsync(true);
 
             // Act
@@ -82,14 +82,14 @@ namespace TestServices.Controller
 
             // Assert
             var createdResult = Assert.IsType<CreatedAtActionResult>(result.Result);
-            Assert.Equal("GetProductos", createdResult.ActionName);
+            Assert.Equal("GetCompras", createdResult.ActionName);
         }
 
         [Fact]
         public async Task PostCompras_ReturnsBadRequest_WhenAddFails()
         {
             // Arrange
-            var compra = new Compras { CompraId = 1, Fecha = DateOnly.FromDateTime(DateTime.Now) };
+            var compra = new Compras { CompraId = 1, Fecha = DateTime.Now };
             _mockPurchaseService.Setup(s => s.AddAsync(compra)).ReturnsAsync(false);
 
             // Act
@@ -103,7 +103,7 @@ namespace TestServices.Controller
         public async Task PutCompras_ReturnsOk_WhenSuccessful()
         {
             // Arrange
-            var compra = new Compras { CompraId = 1, Fecha = DateOnly.FromDateTime(DateTime.Now) };
+            var compra = new Compras { CompraId = 1, Fecha = DateTime.Now };
             _mockPurchaseService.Setup(s => s.PutAsync(compra)).ReturnsAsync(compra);
 
             // Act
@@ -118,7 +118,7 @@ namespace TestServices.Controller
         public async Task PutCompras_ReturnsBadRequest_WhenIdsDoNotMatch()
         {
             // Arrange
-            var compra = new Compras { CompraId = 1, Fecha = DateOnly.FromDateTime(DateTime.Now) };
+            var compra = new Compras { CompraId = 1, Fecha = DateTime.Now };
 
             // Act
             var result = await _controller.PutCompras(2, compra);
@@ -131,7 +131,7 @@ namespace TestServices.Controller
         public async Task DeleteCompras_ReturnsOk_WhenSuccessful()
         {
             // Arrange
-            var compra = new Compras { CompraId = 1, Fecha = DateOnly.FromDateTime(DateTime.Now) };
+            var compra = new Compras { CompraId = 1, Fecha = DateTime.Now };
             _mockPurchaseService.Setup(s => s.DeleteAsync(1)).ReturnsAsync(compra);
 
             // Act

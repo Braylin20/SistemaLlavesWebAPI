@@ -7,15 +7,22 @@ using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using SistemaLlavesWebAPI.Dal;
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.Configuration;
 
 namespace SistemaLlavesWebAPI.Data.DI
 {
     [ExcludeFromCodeCoverage]
     public static class DbContextRegistrar
     {
-        public static IServiceCollection RegisterDbContextFactory(this IServiceCollection services)
+        public static IServiceCollection RegisterDbContextFactory(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContextFactory<Context>(o => o.UseSqlServer("Name=ConStr"));
+            // Usa la configuración para obtener la cadena de conexión
+            var connectionString = configuration.GetConnectionString("ConStr");
+
+            // Configura el DbContextFactory con la cadena de conexión
+            services.AddDbContextFactory<Context>(options =>
+                options.UseSqlServer(connectionString));
+
             return services;
         }
     }
