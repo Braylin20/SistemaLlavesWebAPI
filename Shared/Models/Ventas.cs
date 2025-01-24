@@ -25,5 +25,9 @@ public class Ventas
     public DateOnly Fecha { get; set; }
     public string? Descripcion { get; set; }
     public bool VentaDevuelta { get; set; }
+    [ForeignKey("VentaId")]
+    public ICollection<VentasDetalle> VentaDetalles { get; set; } = new List<VentasDetalle>();
+
+
 
 }
