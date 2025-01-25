@@ -27,8 +27,8 @@ namespace TestServices.Controllers
             // Arrange
             var ventas = new List<Ventas>
         {
-            new Ventas { VentaId = 1, MetodoPagoId = 1, ClienteId = 1, Cantidad = 2, Fecha = new DateOnly(2024, 1, 1), Descripcion = "Venta 1", VentaDevuelta = false },
-            new Ventas { VentaId = 2, MetodoPagoId = 2, ClienteId = 2, Cantidad = 3, Fecha = new DateOnly(2024, 1, 2), Descripcion = "Venta 2", VentaDevuelta = true }
+            new Ventas { VentaId = 1, MetodoPagoId = 1, ClienteId = 1, Cantidad = 2, Fecha = new DateTime(2025, 02, 24), Descripcion = "Venta 1", VentaDevuelta = false },
+            new Ventas { VentaId = 2, MetodoPagoId = 2, ClienteId = 2, Cantidad = 3, Fecha = new DateTime(2024, 01, 2), Descripcion = "Venta 2", VentaDevuelta = true }
         };
             _mockSalesService.Setup(s => s.GetAsync()).ReturnsAsync(ventas);
 
@@ -57,7 +57,7 @@ namespace TestServices.Controllers
         public async Task GetVentasById_Should_Return_Venta()
         {
             // Arrange
-            var venta = new Ventas { VentaId = 1, MetodoPagoId = 1, ClienteId = 1, Cantidad = 2, Fecha = new DateOnly(2024, 1, 1), Descripcion = "Venta 1", VentaDevuelta = false };
+            var venta = new Ventas { VentaId = 1, MetodoPagoId = 1, ClienteId = 1, Cantidad = 2, Fecha = new DateTime(2024, 1, 1), Descripcion = "Venta 1", VentaDevuelta = false };
             _mockSalesService.Setup(s => s.GetVentaById(1)).ReturnsAsync(venta);
 
             // Act
@@ -95,7 +95,7 @@ namespace TestServices.Controllers
         public async Task PostVentas_Should_Return_CreatedVenta()
         {
             // Arrange
-            var venta = new Ventas { VentaId = 1, MetodoPagoId = 1, ClienteId = 1, Cantidad = 2, Fecha = new DateOnly(2024, 1, 1), Descripcion = "Venta 1", VentaDevuelta = false };
+            var venta = new Ventas { VentaId = 1, MetodoPagoId = 1, ClienteId = 1, Cantidad = 2, Fecha = new DateTime(2024, 1, 1), Descripcion = "Venta 1", VentaDevuelta = false };
             _mockSalesService.Setup(s => s.AddAsync(venta)).ReturnsAsync(venta);
 
             // Act
@@ -111,12 +111,11 @@ namespace TestServices.Controllers
         public async Task PostVentas_Should_Return_ErrorServer()
         {
             // Arrange
-            var venta = new Ventas { VentaId = 1, MetodoPagoId = 1, ClienteId = 1, Cantidad = 2, Fecha = new DateOnly(2024, 1, 1), Descripcion = "Venta 1", VentaDevuelta = false };
+            var venta = new Ventas { VentaId = 1, MetodoPagoId = 1, ClienteId = 1, Cantidad = 2, Fecha = new DateTime(2024, 1, 1), Descripcion = "Venta 1", VentaDevuelta = false };
             _mockSalesService.Setup(s => s.AddAsync(venta)).ThrowsAsync(new System.Exception("Error"));
 
             // Act
             var result = await _controller.PostVentas(venta);
-
             // Assert
             var objectResult = Assert.IsType<ObjectResult>(result.Result);
             Assert.Equal(500, objectResult.StatusCode);
@@ -127,7 +126,7 @@ namespace TestServices.Controllers
         public async Task PutVentas_Should_Return_BadRequest()
         {
             // Arrange
-            var venta = new Ventas { VentaId = 1, MetodoPagoId = 1, ClienteId = 1, Cantidad = 2, Fecha = new DateOnly(2024, 1, 1), Descripcion = "Venta 1", VentaDevuelta = false };
+            var venta = new Ventas { VentaId = 1, MetodoPagoId = 1, ClienteId = 1, Cantidad = 2, Fecha = new DateTime(2024, 1, 1), Descripcion = "Venta 1", VentaDevuelta = false };
 
             // Act
             var result = await _controller.PutVentas(2, venta);
@@ -140,7 +139,7 @@ namespace TestServices.Controllers
         public async Task PutVentas_Should_Return_NotFound()
         {
             // Arrange
-            var venta = new Ventas { VentaId = 1, MetodoPagoId = 1, ClienteId = 1, Cantidad = 2, Fecha = new DateOnly(2024, 1, 1), Descripcion = "Venta 1", VentaDevuelta = false };
+            var venta = new Ventas { VentaId = 1, MetodoPagoId = 1, ClienteId = 1, Cantidad = 2, Fecha = new DateTime(2024, 1, 1), Descripcion = "Venta 1", VentaDevuelta = false };
             _mockSalesService.Setup(s => s.PutAsync(venta)).ThrowsAsync(new KeyNotFoundException());
 
             // Act

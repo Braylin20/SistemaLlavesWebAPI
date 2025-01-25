@@ -13,8 +13,6 @@ public class VentasDetalle
     [Key]
     public int VentasDetalleId { get; set; }
 
-    [ForeignKey("VentaId")]
-    public Ventas? Venta { get; set; }
     public int VentaId { get; set; }
 
     [ForeignKey("ProductoId")]

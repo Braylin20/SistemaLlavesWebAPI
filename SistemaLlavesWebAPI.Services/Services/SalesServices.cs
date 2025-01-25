@@ -13,7 +13,7 @@ namespace SistemaLlavesWebAPI.Services
 
         public async Task<IEnumerable<Ventas>> GetAsync()
         {
-            return await _context.Ventas.ToListAsync();
+            return await _context.Ventas.Include(detalle => detalle.VentaDetalles).ToListAsync();
         }
         public async Task<Ventas?> GetVentaById(int id)
         {

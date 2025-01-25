@@ -9,6 +9,7 @@
 *.user
 *.userosscache
 *.sln.docstates
+SistemaLlavesWebAPI.Data/Migrations
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
