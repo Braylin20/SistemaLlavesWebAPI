@@ -22,7 +22,7 @@ public class Ventas
     public MetodosPagos? MetodoPago { get; set; }
 
     public int Cantidad { get; set; }
-    public DateOnly Fecha { get; set; }
+    public DateTime Fecha { get; set; }
     public string? Descripcion { get; set; }
     public bool VentaDevuelta { get; set; }
     [ForeignKey("VentaId")]
