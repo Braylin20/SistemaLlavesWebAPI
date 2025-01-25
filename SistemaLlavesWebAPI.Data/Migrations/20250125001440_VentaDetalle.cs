@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SistemaLlavesWebAPI.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class VentaDetalle : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -94,7 +94,7 @@ namespace SistemaLlavesWebAPI.Data.Migrations
                     MetodoPagoId = table.Column<int>(type: "int", nullable: false),
                     ClienteId = table.Column<int>(type: "int", nullable: false),
                     Cantidad = table.Column<int>(type: "int", nullable: false),
-                    Fecha = table.Column<DateOnly>(type: "date", nullable: false),
+                    Fecha = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     VentaDevuelta = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -125,8 +125,7 @@ namespace SistemaLlavesWebAPI.Data.Migrations
                     Subtotal = table.Column<double>(type: "float", nullable: false),
                     Itbis = table.Column<double>(type: "float", nullable: false),
                     Total = table.Column<double>(type: "float", nullable: false),
-                    ProovedorId = table.Column<int>(type: "int", nullable: true),
-                    ProveedorId = table.Column<int>(type: "int", nullable: false)
+                    ProovedorId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -135,7 +134,8 @@ namespace SistemaLlavesWebAPI.Data.Migrations
                         name: "FK_Compras_Proveedores_ProovedorId",
                         column: x => x.ProovedorId,
                         principalTable: "Proveedores",
-                        principalColumn: "ProovedorId");
+                        principalColumn: "ProovedorId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -202,7 +202,8 @@ namespace SistemaLlavesWebAPI.Data.Migrations
                         column: x => x.ProductoId,
                         principalTable: "Productos",
                         principalColumn: "ProductoId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict
+                        );
                 });
 
             migrationBuilder.CreateTable(

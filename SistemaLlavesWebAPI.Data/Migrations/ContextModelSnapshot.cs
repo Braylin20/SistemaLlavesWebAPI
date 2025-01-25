@@ -260,8 +260,8 @@ namespace SistemaLlavesWebAPI.Data.Migrations
                     b.Property<string>("Descripcion")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateOnly>("Fecha")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("MetodoPagoId")
                         .HasColumnType("int");
@@ -390,20 +390,23 @@ namespace SistemaLlavesWebAPI.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Shared.Models.Ventas", "Venta")
-                        .WithMany()
+                    b.HasOne("Shared.Models.Ventas", null)
+                        .WithMany("VentaDetalles")
                         .HasForeignKey("VentaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Producto");
-
-                    b.Navigation("Venta");
                 });
 
             modelBuilder.Entity("Shared.Models.Compras", b =>
                 {
                     b.Navigation("ComprasDetalles");
+                });
+
+            modelBuilder.Entity("Shared.Models.Ventas", b =>
+                {
+                    b.Navigation("VentaDetalles");
                 });
 #pragma warning restore 612, 618
         }
