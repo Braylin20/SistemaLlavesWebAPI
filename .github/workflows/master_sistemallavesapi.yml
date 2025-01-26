@@ -6,9 +6,6 @@ on:
       - master
   workflow_dispatch:
 
-env:
-  DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-
 jobs:
   build:
     runs-on: windows-latest
@@ -21,10 +18,6 @@ jobs:
         with:
           dotnet-version: '8.x'
           include-prerelease: true
-
-      # Verificar que la variable DB_PASSWORD está configurada
-      - name: Check DB_PASSWORD
-        run: echo "DB_PASSWORD=${{ env.DB_PASSWORD }}"
 
       - name: Build with dotnet
         run: dotnet build ./SistemaLlavesWebApi/SistemaLlavesWebApi.sln --configuration Release
