@@ -21,7 +21,7 @@ namespace SistemaLlavesWebAPI.Data.DI
 
             // Configura el DbContextFactory con la cadena de conexión
             services.AddDbContextFactory<Context>(options =>
-                options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 20)));
+                options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 20))));
 
             return services;
         }
