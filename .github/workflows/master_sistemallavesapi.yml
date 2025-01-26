@@ -5,6 +5,7 @@ on:
     branches:
       - master
   workflow_dispatch:
+
 env:
   DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
 
@@ -20,20 +21,22 @@ jobs:
         with:
           dotnet-version: '8.x'
           include-prerelease: true
-          
-      # Corrección: especificar la ruta del archivo de solución o proyecto
+
+      # Verificar que la variable DB_PASSWORD está configurada
+      - name: Check DB_PASSWORD
+        run: echo "DB_PASSWORD=${{ env.DB_PASSWORD }}"
+
       - name: Build with dotnet
         run: dotnet build ./SistemaLlavesWebApi/SistemaLlavesWebApi.sln --configuration Release
 
-      # Corrección: especificar la ruta para el publish también
       - name: dotnet publish
-        run: dotnet publish ./SistemaLlavesWebApi/SistemaLlavesWebApi.sln -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        run: dotnet publish ./SistemaLlavesWebApi/SistemaLlavesWebApi.sln -c Release -o ./publish
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
         with:
           name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
+          path: ./publish
 
   deploy:
     runs-on: windows-latest
@@ -55,4 +58,4 @@ jobs:
           app-name: 'SistemaLlavesApi'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_C54BA13C66C0427CAB979BEB1CFD9755 }}
-          package: .
+          package: ./publish
