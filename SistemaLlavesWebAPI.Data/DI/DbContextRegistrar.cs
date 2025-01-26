@@ -17,9 +17,7 @@ namespace SistemaLlavesWebAPI.Data.DI
         public static IServiceCollection RegisterDbContextFactory(this IServiceCollection services, IConfiguration configuration)
         {
             // Usa la configuración para obtener la cadena de conexión
-            var connectionString = configuration.GetConnectionString("ConStr")?
-                .Replace("${DB_PASSWORD}", Environment.GetEnvironmentVariable("DB_PASSWORD") ?? throw new InvalidOperationException("DB_PASSWORD no está configurado.")); ;
-
+            var connectionString = configuration.GetConnectionString("ConStr")
             // Configura el DbContextFactory con la cadena de conexión
             services.AddDbContextFactory<Context>(options =>
                 options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 20))));
