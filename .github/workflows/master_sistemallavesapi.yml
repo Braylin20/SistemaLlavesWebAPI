@@ -30,13 +30,13 @@ jobs:
         run: dotnet build ./SistemaLlavesWebApi/SistemaLlavesWebApi.sln --configuration Release
 
       - name: dotnet publish
-        run: dotnet publish ./SistemaLlavesWebApi/SistemaLlavesWebApi.sln -c Release -o ./publish
+        run: dotnet publish ./SistemaLlavesWebApi/SistemaLlavesWebApi.sln -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
         with:
           name: .net-app
-          path: ./publish
+          path: ${{env.DOTNET_ROOT}}/myapp
 
   deploy:
     runs-on: windows-latest
@@ -58,4 +58,4 @@ jobs:
           app-name: 'SistemaLlavesApi'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_C54BA13C66C0427CAB979BEB1CFD9755 }}
-          package: ./publish
+          package: .
