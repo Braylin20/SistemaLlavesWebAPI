@@ -16,7 +16,7 @@ namespace SistemaLlavesWebAPI
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-
+            builder.Configuration.AddEnvironmentVariables();
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -34,10 +34,8 @@ namespace SistemaLlavesWebAPI
 
             //Inyeccion del contexto
             builder.Services.Register_Services(builder.Configuration);
-            builder.Configuration.AddEnvironmentVariables();
-
-
-
+            
+            
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
