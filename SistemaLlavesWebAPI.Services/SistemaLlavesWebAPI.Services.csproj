@@ -12,6 +12,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SistemaLlavesWebAPI.Data\SistemaLlavesWebAPI.Data.csproj" />
+	  <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0" />
+
   </ItemGroup>
 
 </Project>
