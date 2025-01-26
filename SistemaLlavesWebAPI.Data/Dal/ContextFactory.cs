@@ -17,7 +17,7 @@ namespace SistemaLlavesWebAPI.Dal
 
             // Configura las opciones del contexto
             var optionsBuilder = new DbContextOptionsBuilder<Context>();
-            optionsBuilder.UseSqlServer(configuration.GetConnectionString("ConStr"));
+            optionsBuilder.UseMySql(configuration.GetConnectionString("ConStr"), new MySqlServerVersion(new Version(8,0,20)));
 
             return new Context(optionsBuilder.Options);
         }

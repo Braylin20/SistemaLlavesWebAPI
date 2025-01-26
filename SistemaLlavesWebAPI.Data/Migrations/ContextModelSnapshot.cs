@@ -17,10 +17,10 @@ namespace SistemaLlavesWebAPI.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.0")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+                .HasAnnotation("ProductVersion", "8.0.2")
+                .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
             modelBuilder.Entity("Shared.Models.Categorias", b =>
                 {
@@ -28,10 +28,10 @@ namespace SistemaLlavesWebAPI.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CategoriaId"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("CategoriaId"));
 
                     b.Property<string>("Nombre")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.HasKey("CategoriaId");
 
@@ -44,20 +44,20 @@ namespace SistemaLlavesWebAPI.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ClienteId"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("ClienteId"));
 
                     b.Property<string>("Direccion")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("RNC")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Telefono")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.HasKey("ClienteId");
 
@@ -70,22 +70,22 @@ namespace SistemaLlavesWebAPI.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CompraId"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("CompraId"));
 
                     b.Property<DateTime>("Fecha")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<double>("Itbis")
-                        .HasColumnType("float");
+                        .HasColumnType("double");
 
                     b.Property<int>("ProovedorId")
                         .HasColumnType("int");
 
                     b.Property<double>("Subtotal")
-                        .HasColumnType("float");
+                        .HasColumnType("double");
 
                     b.Property<double>("Total")
-                        .HasColumnType("float");
+                        .HasColumnType("double");
 
                     b.HasKey("CompraId");
 
@@ -100,7 +100,7 @@ namespace SistemaLlavesWebAPI.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CompraDetalleId"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("CompraDetalleId"));
 
                     b.Property<int>("Cantidad")
                         .HasColumnType("int");
@@ -112,7 +112,7 @@ namespace SistemaLlavesWebAPI.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<double>("Total")
-                        .HasColumnType("float");
+                        .HasColumnType("double");
 
                     b.HasKey("CompraDetalleId");
 
@@ -129,19 +129,19 @@ namespace SistemaLlavesWebAPI.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("GarantiaId"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("GarantiaId"));
 
                     b.Property<string>("Descripcion")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<bool>("Estado")
-                        .HasColumnType("bit");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<DateTime>("FinGarantia")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<DateTime>("InicioGarantia")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.HasKey("GarantiaId");
 
@@ -154,11 +154,11 @@ namespace SistemaLlavesWebAPI.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MetodoPagoId"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("MetodoPagoId"));
 
                     b.Property<string>("TipoMetodoPago")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.HasKey("MetodoPagoId");
 
@@ -171,7 +171,7 @@ namespace SistemaLlavesWebAPI.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductoId"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("ProductoId"));
 
                     b.Property<int>("Cantidad")
                         .HasColumnType("int");
@@ -180,26 +180,26 @@ namespace SistemaLlavesWebAPI.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<double>("Costo")
-                        .HasColumnType("float");
+                        .HasColumnType("double");
 
                     b.Property<string>("Descripcion")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<double?>("Descuento")
-                        .HasColumnType("float");
+                        .HasColumnType("double");
 
                     b.Property<int?>("GarantiaId")
                         .HasColumnType("int");
 
                     b.Property<double?>("Itbis")
-                        .HasColumnType("float");
+                        .HasColumnType("double");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<double>("Precio")
-                        .HasColumnType("float");
+                        .HasColumnType("double");
 
                     b.Property<int>("ProveedorId")
                         .HasColumnType("int");
@@ -221,22 +221,22 @@ namespace SistemaLlavesWebAPI.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProovedorId"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("ProovedorId"));
 
                     b.Property<string>("Celular")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Direccion")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.HasKey("ProovedorId");
 
@@ -249,7 +249,7 @@ namespace SistemaLlavesWebAPI.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("VentaId"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("VentaId"));
 
                     b.Property<int>("Cantidad")
                         .HasColumnType("int");
@@ -258,16 +258,16 @@ namespace SistemaLlavesWebAPI.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Descripcion")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime>("Fecha")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("MetodoPagoId")
                         .HasColumnType("int");
 
                     b.Property<bool>("VentaDevuelta")
-                        .HasColumnType("bit");
+                        .HasColumnType("tinyint(1)");
 
                     b.HasKey("VentaId");
 
@@ -284,19 +284,19 @@ namespace SistemaLlavesWebAPI.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("VentasDetalleId"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("VentasDetalleId"));
 
                     b.Property<int>("Cantidad")
                         .HasColumnType("int");
 
                     b.Property<double>("ItbisTotal")
-                        .HasColumnType("float");
+                        .HasColumnType("double");
 
                     b.Property<int>("ProductoId")
                         .HasColumnType("int");
 
                     b.Property<double>("Total")
-                        .HasColumnType("float");
+                        .HasColumnType("double");
 
                     b.Property<int>("VentaId")
                         .HasColumnType("int");
