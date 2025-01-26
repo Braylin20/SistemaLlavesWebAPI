@@ -18,7 +18,6 @@ namespace SistemaLlavesWebAPI.Data.DI
         {
             // Usa la configuración para obtener la cadena de conexión
             var connectionString = configuration.GetConnectionString("ConStr");
-
             // Configura el DbContextFactory con la cadena de conexión
             services.AddDbContextFactory<Context>(options =>
                 options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 20))));

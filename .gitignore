@@ -15,7 +15,7 @@ SistemaLlavesWebAPI.Data/Migrations
 *.userprefs
 
 # Ignorar appsettings.json
-appsettings.json
+
 
 # Mono auto generated files
 mono_crash.*
