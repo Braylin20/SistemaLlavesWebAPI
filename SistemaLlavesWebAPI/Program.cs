@@ -34,8 +34,9 @@ namespace SistemaLlavesWebAPI
 
             //Inyeccion del contexto
             builder.Services.Register_Services(builder.Configuration);
+            builder.Configuration.AddEnvironmentVariables();
 
-  
+
 
             var app = builder.Build();
 
