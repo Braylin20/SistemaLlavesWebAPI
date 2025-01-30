@@ -20,5 +20,4 @@ public class Cuadres
     public double Diferencia { get; set; }
     public string? Observaciones { get; set; }
     public bool Pendiente { get; set; }
-
 }
