@@ -2,7 +2,9 @@
 using Microsoft.Extensions.DependencyInjection;
 using Shared.Models;
 using SistemaLlavesWebAPI.Abstractions;
+using SistemaLlavesWebAPI.Abstractions.Interfaces;
 using SistemaLlavesWebAPI.Data.DI;
+using SistemaLlavesWebAPI.Services.Services;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -26,6 +28,7 @@ namespace SistemaLlavesWebAPI.Services.DI
             services.AddScoped<IClientService, ClientService>();
             services.AddScoped<ISalesService, SalesServices>();
             services.AddScoped<IWarrantyService, WarrantyService>();
+            services.AddScoped<ICuadresService, CuadresServices>();
          
             return services;
 
