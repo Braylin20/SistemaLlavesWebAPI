@@ -4,12 +4,14 @@ using SistemaLlavesWebAPI.Abstractions.Interfaces;
 using SistemaLlavesWebAPI.Dal;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace SistemaLlavesWebAPI.Services.Services;
 
+[ExcludeFromCodeCoverage]
 public class CuadresServices(Context context) : ICuadresService
 {
     private readonly Context _context =context;
