@@ -123,6 +123,46 @@ namespace SistemaLlavesWebAPI.Data.Migrations
                     b.ToTable("ComprasDetalle");
                 });
 
+            modelBuilder.Entity("Shared.Models.Cuadres", b =>
+                {
+                    b.Property<int>("CuadreId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("CuadreId"));
+
+                    b.Property<DateTime>("CierreCaja")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<double>("Diferencia")
+                        .HasColumnType("double");
+
+                    b.Property<string>("Observaciones")
+                        .HasColumnType("longtext");
+
+                    b.Property<bool>("Pendiente")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<double>("TotalEfectivo")
+                        .HasColumnType("double");
+
+                    b.Property<double>("VentasEfectivo")
+                        .HasColumnType("double");
+
+                    b.Property<double>("VentasTarjeta")
+                        .HasColumnType("double");
+
+                    b.Property<double>("VentasTotal")
+                        .HasColumnType("double");
+
+                    b.Property<double>("VentasTransferencia")
+                        .HasColumnType("double");
+
+                    b.HasKey("CuadreId");
+
+                    b.ToTable("Cuadres");
+                });
+
             modelBuilder.Entity("Shared.Models.Garantias", b =>
                 {
                     b.Property<int>("GarantiaId")
