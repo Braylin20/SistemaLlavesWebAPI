@@ -20,9 +20,9 @@ public class CuadresServices(Context context) : ICuadresService
     {
         return await _context.Cuadres.ToListAsync();
     }
-    public async Task<Cuadres> GetByIdAsync(int clientesId)
+    public async Task<Cuadres> GetByIdAsync(int cuadresId)
     {
-        var cuadre = await _context.Cuadres.FindAsync(clientesId);
+        var cuadre = await _context.Cuadres.FindAsync(cuadresId);
         if(cuadre is null)
             throw new KeyNotFoundException("Cuadre no encontrado.");
 
@@ -31,7 +31,7 @@ public class CuadresServices(Context context) : ICuadresService
     public async Task<bool> AddAsync(Cuadres cuadres)
     {
         await _context.Cuadres.AddAsync(cuadres);
-        return _context.SaveChanges() > 0;
+        return await _context.SaveChangesAsync() > 0;
     }
     public async Task<bool> PutAsync(Cuadres cuadres)
     {
@@ -43,9 +43,9 @@ public class CuadresServices(Context context) : ICuadresService
         _context.Update(cuadres);
         return await _context.SaveChangesAsync() > 0;
     }
-    public async Task<Cuadres?> DeleteAsync(int clientesId)
+    public async Task<Cuadres?> DeleteAsync(int cuadresId)
     {
-        var cuadre = await _context.Cuadres.FindAsync(clientesId);
+        var cuadre = await _context.Cuadres.FindAsync(cuadresId);
         if (cuadre != null)
         {
             _context.Remove(cuadre);
