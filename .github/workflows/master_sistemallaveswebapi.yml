@@ -1,5 +1,4 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
+# Workflow para compilar y desplegar una aplicación ASP.NET Core en Azure
 
 name: Build and deploy ASP.Net Core app to Azure Web App - SistemaLlavesWebApi
 
@@ -14,25 +13,28 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout código fuente
+        uses: actions/checkout@v4
 
-      - name: Set up .NET Core
-        uses: actions/setup-dotnet@v1
+      - name: Configurar .NET Core
+        uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.x'
-          include-prerelease: true
+          dotnet-version: '8.0.x' # Especifica la versión estable
 
-      - name: Build with dotnet
-        run: dotnet build ./SistemaLlavesWebApi/SistemaLlavesWebApi.sln --configuration Release
+      - name: Restaurar paquetes
+        run: dotnet restore ./SistemaLlavesWebApi/SistemaLlavesWebApi.sln
 
-      - name: dotnet publish
-        run: dotnet publish ./SistemaLlavesWebApi/SistemaLlavesWebApi.sln -c Release -o ${{env.DOTNET_ROOT}}/myapp
+      - name: Compilar con dotnet
+        run: dotnet build ./SistemaLlavesWebApi/SistemaLlavesWebApi.sln --configuration Release --no-restore
 
-      - name: Upload artifact for deployment job
+      - name: Publicar la aplicación
+        run: dotnet publish ./SistemaLlavesWebApi/SistemaLlavesWebApi.sln --configuration Release --output ${{ github.workspace }}/publish
+
+      - name: Subir artefacto para el job de despliegue
         uses: actions/upload-artifact@v4
         with:
           name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
+          path: ${{ github.workspace }}/publish
 
   deploy:
     runs-on: windows-latest
@@ -42,16 +44,18 @@ jobs:
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
-      - name: Download artifact from build job
+      - name: Descargar artefacto del job de compilación
         uses: actions/download-artifact@v4
         with:
           name: .net-app
+          path: ${{ github.workspace }}/publish
 
-      - name: Deploy to Azure Web App
+      - name: Desplegar en Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'SistemaLlavesWebApi'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_F2D285300F02431091D1CC373974024E }}
-          package: .
+          package: ${{ github.workspace }}/publish
+
